@@ -1,0 +1,84 @@
+GCCmylang_INSTALL_NAME := $(shell echo gccmylang|sed '$(program_transform_name)')
+GCCmylang_TARGET_INSTALL_NAME := $(target_noncanonical)-$(shell echo gccmylang|sed '$(program_transform_name)')
+
+mylang: mylang1$(exeext)
+
+.PHONY: mylang
+
+# Driver
+
+GCCmylang_OBJS = \
+   $(GCC_OBJS) \
+   mylang/mylangdriver.o \
+   $(END)
+
+gccmylang$(exeext): $(GCCmylang_OBJS) $(EXTRA_GCC_OBJS) libcommon-target.a $(LIBDEPS)
+	+$(LINKER) $(ALL_LINKERFLAGS) $(LDFLAGS) -o $@ \
+	  $(GCCmylang_OBJS) $(EXTRA_GCC_OBJS) libcommon-target.a \
+	  $(EXTRA_GCC_LIBS) $(LIBS)
+
+# The compiler proper
+
+mylang_OBJS = \
+	mylang/MylangParser.o \
+	mylang/MylangScanner.o \
+    mylang/mylang.o \
+	mylang/MyIO.o \
+	mylang/mylang-convert.o \
+	c-family/c-dump.o \
+    $(END)
+
+mylang1$(exeext): attribs.o $(mylang_OBJS) $(BACKEND) $(LIBDEPS)
+	+$(LLINKER) $(ALL_LINKERFLAGS) $(LDFLAGS) -o $@ \
+	attribs.o $(mylang_OBJS) $(BACKEND) $(LIBS) $(BACKENDLIBS)
+
+mylang.all.cross:
+
+mylang.start.encap: gccmylang$(exeext)
+mylang.rest.encap:
+
+mylang.install-common: installdirs
+	-rm -f $(DESTDIR)$(bindir)/$(GCCmylang_INSTALL_NAME)$(exeext)
+	$(INSTALL_PROGRAM) gccmylang$(exeext) $(DESTDIR)$(bindir)/$(GCCmylang_INSTALL_NAME)$(exeext)
+	rm -f $(DESTDIR)$(bindir)/$(GCCmylang_TARGET_INSTALL_NAME)$(exeext); \
+	( cd $(DESTDIR)$(bindir) && \
+      $(LN) $(GCCmylang_INSTALL_NAME)$(exeext) $(GCCmylang_TARGET_INSTALL_NAME)$(exeext) ); \
+
+# Required goals, they still do nothing
+mylang.install-man:
+mylang.install-info:
+mylang.install-pdf:
+mylang.install-plugin:
+mylang.install-html:
+mylang.info:
+mylang.dvi:
+mylang.pdf:
+mylang.html:
+mylang.man:
+mylang.mostlyclean:
+mylang.clean:
+mylang.distclean:
+mylang.maintainer-clean:
+
+# No mylang-specific selftests
+selftest-mylang:
+check-mylang:
+
+# make uninstall
+mylang.uninstall:
+	-rm -f gccmylang$(exeext) mylang1$(exeext)
+	-rm -f $(mylang_OBJS)
+
+# Used for handling bootstrap
+mylang.stage1: stage1-start
+	-mv mylang/*$(objext) stage1/mylang
+mylang.stage2: stage2-start
+	-mv mylang/*$(objext) stage2/mylang
+mylang.stage3: stage3-start
+	-mv mylang/*$(objext) stage3/mylang
+mylang.stage4: stage4-start
+	-mv mylang/*$(objext) stage4/mylang
+mylang.stageprofile: stageprofile-start
+	-mv mylang/*$(objext) stageprofile/mylang
+mylang.stagefeedback: stagefeedback-start
+	-mv mylang/*$(objext) stagefeedback/mylang

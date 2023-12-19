@@ -1,0 +1,14 @@
+# gcc-src/gcc/config/config-lang.in
+language="mylang"
+
+compilers="mylang1\$(exeext)"
+
+target_libs=""
+
+gtfiles="\$(srcdir)/mylang/mylang.cc"
+
+# We will write the mylang FE in C++
+lang_requires_boot_languages=c++
+
+# Do not build by default
+build_by_default="no"
