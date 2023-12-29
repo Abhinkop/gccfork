@@ -45,13 +45,15 @@
 #ifndef YY_YY_MYLANGPARSER_H_INCLUDED
 # define YY_YY_MYLANGPARSER_H_INCLUDED
 // "%code requires" blocks.
-#line 42 "mylang.yy"
+#line 50 "mylang.yy"
 
 
  typedef union tree_node *tree;
+ class GenericStatementList;
+ class GenericBlock;
 
 
-#line 55 "MylangParser.h"
+#line 57 "MylangParser.h"
 
 
 # include <cstdlib> // std::abort
@@ -185,9 +187,9 @@
 # define YYDEBUG 0
 #endif
 
-#line 38 "mylang.yy"
+#line 46 "mylang.yy"
 namespace mylang {
-#line 191 "MylangParser.h"
+#line 193 "MylangParser.h"
 
 
 
@@ -383,13 +385,23 @@ namespace mylang {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // expr
-      char dummy1[sizeof (int)];
+      // block
+      char dummy1[sizeof (GenericBlock*)];
+
+      // statement_list
+      char dummy2[sizeof (GenericStatementList*)];
 
       // INTLITERAL
       // FLOATLITERAL
       // ID
-      char dummy2[sizeof (std::string)];
+      char dummy3[sizeof (std::string)];
+
+      // args
+      char dummy4[sizeof (std::vector<tree>)];
+
+      // statement
+      // expr
+      char dummy5[sizeof (tree)];
     };
 
     /// The size of the largest semantic type.
@@ -519,11 +531,12 @@ namespace mylang {
         S_YYACCEPT = 34,                         // $accept
         S_program = 35,                          // program
         S_function = 36,                         // function
-        S_args = 37,                             // args
-        S_block = 38,                            // block
-        S_statement_list = 39,                   // statement_list
-        S_statement = 40,                        // statement
-        S_expr = 41                              // expr
+        S_func_decl = 37,                        // func_decl
+        S_args = 38,                             // args
+        S_block = 39,                            // block
+        S_statement_list = 40,                   // statement_list
+        S_statement = 41,                        // statement
+        S_expr = 42                              // expr
       };
     };
 
@@ -558,14 +571,27 @@ namespace mylang {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_expr: // expr
-        value.move< int > (std::move (that.value));
+      case symbol_kind::S_block: // block
+        value.move< GenericBlock* > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.move< GenericStatementList* > (std::move (that.value));
         break;
 
       case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
       case symbol_kind::S_ID: // ID
         value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_args: // args
+        value.move< std::vector<tree> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expr: // expr
+        value.move< tree > (std::move (that.value));
         break;
 
       default:
@@ -590,12 +616,24 @@ namespace mylang {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, int&& v)
+      basic_symbol (typename Base::kind_type t, GenericBlock*&& v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const int& v)
+      basic_symbol (typename Base::kind_type t, const GenericBlock*& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, GenericStatementList*&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const GenericStatementList*& v)
         : Base (t)
         , value (v)
       {}
@@ -608,6 +646,30 @@ namespace mylang {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const std::string& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::vector<tree>&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::vector<tree>& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, tree&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const tree& v)
         : Base (t)
         , value (v)
       {}
@@ -637,14 +699,27 @@ namespace mylang {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_expr: // expr
-        value.template destroy< int > ();
+      case symbol_kind::S_block: // block
+        value.template destroy< GenericBlock* > ();
+        break;
+
+      case symbol_kind::S_statement_list: // statement_list
+        value.template destroy< GenericStatementList* > ();
         break;
 
       case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
       case symbol_kind::S_ID: // ID
         value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_args: // args
+        value.template destroy< std::vector<tree> > ();
+        break;
+
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expr: // expr
+        value.template destroy< tree > ();
         break;
 
       default:
@@ -754,7 +829,7 @@ switch (yykind)
     };
 
     /// Build a parser object.
-    MylangParser (yyscan_t scanner_yyarg, tree  &myroot_yyarg);
+    MylangParser (yyscan_t scanner_yyarg, tree  &mainfunc_yyarg);
     virtual ~MylangParser ();
 
 #if 201103L <= YY_CPLUSPLUS
@@ -1355,7 +1430,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const short yypact_[];
+    static const signed char yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -1388,7 +1463,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const unsigned char yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -1615,32 +1690,32 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 215,     ///< Last index in yytable_.
-      yynnts_ = 8,  ///< Number of nonterminal symbols.
-      yyfinal_ = 5 ///< Termination state number.
+      yylast_ = 31,     ///< Last index in yytable_.
+      yynnts_ = 9,  ///< Number of nonterminal symbols.
+      yyfinal_ = 6 ///< Termination state number.
     };
 
 
     // User arguments.
     yyscan_t scanner;
-    tree  &myroot;
+    tree  &mainfunc;
 
   };
 
 
-#line 38 "mylang.yy"
+#line 46 "mylang.yy"
 } // mylang
-#line 1634 "MylangParser.h"
+#line 1709 "MylangParser.h"
 
 
 // "%code provides" blocks.
-#line 48 "mylang.yy"
+#line 58 "mylang.yy"
 
     #define YY_DECL \
         int yylex(mylang::MylangParser::semantic_type *yylval, yyscan_t yyscanner)
     YY_DECL;
 
-#line 1644 "MylangParser.h"
+#line 1719 "MylangParser.h"
 
 
 #endif // !YY_YY_MYLANGPARSER_H_INCLUDED

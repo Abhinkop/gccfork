@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "config.h"
 #include "system.h"
 #include "coretypes.h"
@@ -21,14 +20,25 @@
 #include "cgraph.h"
 #include "context.h"
 #include "tree-dump.h"
-#include "stringpool.h"
 
-class GeneratorUtils
+class GenericBlock
 {
+private:
+    tree current_block;
+    tree bind_expr;
+    void copy(const GenericBlock &other);
 public:
-    static tree generateIntConstant(const std::string &asciiIntStr);
-    static tree generateFloatConstant(const std::string &asciiFloatStr);
-    static tree generateVariableDeclaration(const std::string &name, tree type);
-    static tree generateDeclareExpr(tree decl);
-    static tree generateAssignmentTree(tree decl, tree expr);
+    GenericBlock(tree stmtList);
+    GenericBlock(const GenericBlock &other);
+    GenericBlock& operator=(const GenericBlock &other);
+    ~GenericBlock();
+
+    tree getBlockTree()
+    {
+        return current_block;
+    }
+    tree getBlockBindExpr()
+    {
+        return bind_expr;
+    }
 };

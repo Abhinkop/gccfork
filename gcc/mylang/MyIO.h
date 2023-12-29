@@ -33,4 +33,5 @@ public:
     ~MyIO();
     static tree PrintInt(tree expr);
     static tree PrintFloat(tree expr);
+    static tree Print(tree expr);
 };

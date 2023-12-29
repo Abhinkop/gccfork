@@ -24,6 +24,8 @@
 #include "MyIO.h"
 #include "GenericFunction.h"
 #include "GeneratorUtils.h"
+#include "GenericBlock.h"
+#include "GenericStatementList.h"
 
 #include "MylangScanner.h"
 #include "MylangParser.h"
@@ -92,18 +94,27 @@ static tree getDummyMain()
 {
 
   std::vector<tree> args;
-  args.push_back(integer_type_node);
-  args.push_back(build_pointer_type(build_pointer_type(char_type_node)));
-  GenericFunction mainFunc(integer_type_node,"main",args);
-
+  // args.push_back(integer_type_node);
+  // args.push_back(build_pointer_type(build_pointer_type(char_type_node)));
+  GenericFunction mainFunc(integer_type_node, std::string("main"), args);
+  GenericStatementList stmtList;
+  tree var1 = GeneratorUtils::generateVariableDeclaration("a", integer_type_node);
+  stmtList.addStatement(GeneratorUtils::generateDeclareExpr(var1));
+  tree intConst = GeneratorUtils::generateIntConstant("1111");
+  stmtList.addStatement(GeneratorUtils::generateAssignmentTree(var1, intConst));
+  tree var2 = GeneratorUtils::generateVariableDeclaration("b", float_type_node);
+  stmtList.addStatement(GeneratorUtils::generateDeclareExpr(var2));
+  tree floatConst = GeneratorUtils::generateFloatConstant("1111.1");
+  stmtList.addStatement(GeneratorUtils::generateAssignmentTree(var2, floatConst));
   // printf
-  tree t = MyIO::PrintFloat(GeneratorUtils::generateFloatConstant("1.2"));
-  mainFunc.addStatement(t);
-  t= MyIO::PrintInt(GeneratorUtils::generateIntConstant("88"));
-  mainFunc.addStatement(t);
-  tree retval = mainFunc.getFuncRetval();
+  tree t = MyIO::PrintFloat(var2);
+  stmtList.addStatement(t);
+
+  t = MyIO::PrintInt(var1);
+  stmtList.addStatement(t);
 
   // return value
+  tree retval = mainFunc.getFuncRetval();
   tree modify_retval = build2(MODIFY_EXPR,
                               integer_type_node,
                               retval,
@@ -111,7 +122,11 @@ static tree getDummyMain()
   tree return_stmt = build1(RETURN_EXPR,
                             integer_type_node,
                             modify_retval);
-  mainFunc.addStatement(return_stmt);
+  stmtList.addStatement(return_stmt);
+
+  GenericBlock block(stmtList.getStmtList());
+
+  mainFunc.addBlock(block.getBlockTree(),block.getBlockBindExpr());
 
   return mainFunc.getFuncGenericTree();
 }
@@ -119,7 +134,8 @@ static tree getDummyMain()
 static void
 mylang_langhook_parse_file(void)
 {
-    std::cout <<"parsing starts" <<"\n";
+  std::cout << "parsing starts"
+            << "\n";
 
   gcc_assert(num_in_fnames == 1);
   FILE *file = fopen(in_fnames[0], "r");
@@ -131,12 +147,13 @@ mylang_langhook_parse_file(void)
   yyscan_t scanner;
   yylex_init(&scanner);
   yyset_in(file, scanner);
-  tree myroot;
-  mylang::MylangParser parser{scanner,myroot};
+  tree function;
+  mylang::MylangParser parser{scanner, function};
   std::cout.precision(10);
   parser.parse();
 
-  std::cout <<"parsing ends" <<"\n";
+  std::cout << "parsing ends"
+            << "\n";
   yylex_destroy(scanner);
   fclose(file);
 
@@ -148,9 +165,9 @@ mylang_langhook_parse_file(void)
   // dump_function(TDI_original,fndecl);
   // dumps->dump_finish(TDI_original);
   // dump_tree_statistics();
-  
+
   // Convert from GENERIC to GIMPLE
-  tree fndecl = getDummyMain();
+  tree fndecl = function;//getDummyMain();
   gimplify_function_tree(fndecl);
 
   // Insert it into the graph

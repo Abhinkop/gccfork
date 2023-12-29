@@ -25,9 +25,16 @@
 #include "context.h"
 #include "tree-dump.h"
 #include "MylangScanner.h"
+#include "GenericFunction.h"
+#include "GeneratorUtils.h"
+#include "GenericBlock.h"
+#include "GenericStatementList.h"
+#include "MyIO.h"
 
-std::map<std::string, int> sym;
-
+std::map<std::string, tree> sym;
+GenericFunction* currentFunction = NULL;
+tree* bind_expr;
+GenericStatementList* current_stmt_list = NULL;
 %}
  
 %require "3.7.4"
@@ -39,10 +46,12 @@ std::map<std::string, int> sym;
 %define api.namespace {mylang}
 %define api.value.type variant
 %param {yyscan_t scanner}
-%parse-param { tree  &myroot  }
+%parse-param { tree  &mainfunc  }
  %code requires{
 
  typedef union tree_node *tree;
+ class GenericStatementList;
+ class GenericBlock;
 
 }
 %code provides
@@ -63,7 +72,11 @@ std::map<std::string, int> sym;
 %token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
 %token READ WRITE
 
-%type <int> expr
+%type <tree> expr
+%type <tree> statement
+%type <GenericStatementList*> statement_list
+%type <GenericBlock*> block
+%type <std::vector<tree>> args
 
 %left LOGICAL_NOT
 %left LOGICAL_OR
@@ -76,51 +89,97 @@ std::map<std::string, int> sym;
  
  
 %%
-program : function
-        | program function
+program : function          {
+                                std::cout << "Matched function" <<std::endl;
+                                //std::vector<GenericFunction*> functionList;
+                                //functionList.push_back($1);
+                                //mainfunc = functionList[1]->getFuncGenericTree();
+                            }
+        | program function  {
+                                std::cout << "Matched program function" <<std::endl;
+                            }
         ; 
-function : INT_TYPE ID LPAREN args RPAREN block
+function : func_decl block {
+                                std::cout << "Matched func_decl block" <<std::endl;
+                                currentFunction->addBlock($2->getBlockTree(),$2->getBlockBindExpr());                    
+                                mainfunc = currentFunction->getFuncGenericTree();
+                            }
+            ;
+    
+func_decl : INT_TYPE ID LPAREN args RPAREN {
+                                                    std::cout << "Matched INT_TYPE ID LPAREN args RPAREN" <<std::endl;
+                                                    currentFunction = new GenericFunction(integer_type_node, $2, $4);
+                                                }
+                                                ;
 
-args : 
-        | INT_TYPE ID
-        | args COMMA INT_TYPE ID 
+args :                  {
+                            std::cout << "Matched Empty args" << std::endl;
+                            $$.clear();
+                        }
+        | INT_TYPE ID   {
+                            std::cout << "Matched INT_TYPE ID" << std::endl;
+                            $$.push_back(integer_type_node);
+                        }
+        | args COMMA INT_TYPE ID    {
+                                        std::cout << "Matched args COMMA INT_TYPE ID" << std::endl;
+                                        $$.push_back(integer_type_node);
+                                    }      
         ;
 
-block : LBRACE statement_list RBRACE
+block : LBRACE statement_list RBRACE    {
+                                            std::cout << "Matched LBRACE statement_list RBRACE" << std::endl;
+                                            $$ = new GenericBlock($2->getStmtList());
+                                        } 
  
-statement_list: /* empty */
-        | statement_list statement
+statement_list: /* empty */ {
+                                std::cout << "Matched Empty statement_list" << std::endl;
+                                $$ = new GenericStatementList();
+                                                            }
+        | statement_list statement  {
+                                        std::cout << "Matched statement_list statement" << std::endl;
+                                        $1->addStatement($2);
+                                        $$=$1;
+                                                                            }
         ;
 
 statement: expr SEMICOLON
-         | INT_TYPE ID SEMICOLON { sym[$2] = 0; }
-         | ID ASSIGN expr SEMICOLON { sym[$1] = $3; }
-         | IF LPAREN expr RPAREN LBRACE block RBRACE
-         | IF LPAREN expr RPAREN LBRACE block RBRACE ELSE LBRACE block RBRACE
-         | WHILE LPAREN expr RPAREN LBRACE block RBRACE
-         | RETURN expr SEMICOLON                {
-                                                   ; 
-                                                }
-         | WRITE ID SEMICOLON {std::cout <<sym[$2] <<"\n";}
+         | INT_TYPE ID SEMICOLON    { 
+                                        std::cout << "Matched INT_TYPE ID SEMICOLON" << std::endl;
+                                        tree varDecl = GeneratorUtils::generateVariableDeclaration("$2", integer_type_node);
+                                        sym[$2] = varDecl;
+                                        $$ = GeneratorUtils::generateDeclareExpr(sym[$2]);
+                                    }
+         | ID ASSIGN expr SEMICOLON { 
+                                        std::cout << "Matched ID ASSIGN expr SEMICOLON" << std::endl;
+                                        $$ = GeneratorUtils::generateAssignmentTree(sym[$1], $3);
+                                    }
+         | RETURN expr SEMICOLON    {
+                                        std::cout << "Matched RETURN expr SEMICOLON" << std::endl; 
+                                        // return value
+                                        tree retval = currentFunction->getFuncRetval();
+                                        tree modify_retval = build2(MODIFY_EXPR,
+                                                                    TREE_TYPE (retval),
+                                                                    retval,
+                                                                    $2);
+                                        $$ = build1(RETURN_EXPR,
+                                                    TREE_TYPE (retval),
+                                                    modify_retval);
+                                    }
+         | WRITE ID SEMICOLON       {
+                                        std::cout << "Matched WRITE ID SEMICOLON" << std::endl;
+                                        $$ = MyIO::Print(sym[$2]);
+                                    }
          ;
 
-expr: ID { $$ = sym[$1]; }
-    | INTLITERAL { $$ = strtoll($1.c_str(), nullptr, 10);}
-    | expr ADD expr { $$ = $1 + $3; }
-    | expr SUB expr { $$ = $1 - $3; }
-    | expr MUL expr { $$ = $1 * $3; }
-    | expr DIV expr { $$ = $1 / $3; }
-    | expr LESS_THAN expr { $$ = $1 < $3; }
-    | expr GREATER_THAN expr { $$ = $1 > $3; }
-    | expr LESS_THAN_EQUAL expr { $$ = $1 <= $3; }
-    | expr GREATER_THAN_EQUAL expr { $$ = $1 >= $3; }
-    | expr EQUAL expr { $$ = $1 == $3; }
-    | expr NOT_EQUAL expr { $$ = $1 != $3; }
-    | expr LOGICAL_AND expr { $$ = $1 && $3; }
-    | expr LOGICAL_OR expr { $$ = $1 || $3; }
-    | LOGICAL_NOT expr { $$ = !$2; }
-    | LPAREN expr RPAREN { $$ = $2; }
-    ;
+expr: ID            { 
+                        std::cout << "Matched ID" << std::endl;
+                        $$ = sym[$1]; 
+                    }
+    | INTLITERAL    { 
+                        std::cout << "Matched INTLITERAL" << std::endl;
+                        $$ = GeneratorUtils::generateIntConstant(std::string($1));
+                    }
+                ;
  
 %%
  

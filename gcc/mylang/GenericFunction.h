@@ -32,18 +32,33 @@ private:
     tree current_block;
     tree retval;
 
-    GenericFunction(const GenericFunction &);
-    GenericFunction& operator=(const GenericFunction &);
+    GenericFunction(const GenericFunction &other)
+    {
+        this->function = other.function;
+        this->current_stmt_iter = other.current_stmt_iter;
+        this->current_block = other.current_block;
+        this->function = other.function;
+        this->retval = other.retval;
+    }
+    GenericFunction& operator=(const GenericFunction &&other)
+    {
+        this->function = other.function;
+        this->current_stmt_iter = other.current_stmt_iter;
+        this->current_block = other.current_block;
+        this->function = other.function;
+        this->retval = other.retval;
+        return *this;
+    }
 
 public:
-    GenericFunction(tree &returnType, std::string name, std::vector<tree> &args);
+    GenericFunction(tree returnType, std::string name, std::vector<tree> &args);
     ~GenericFunction();
-    void addStatement(tree &stmt);
-    tree &getFuncGenericTree()
+    void addBlock(tree block, tree bind_expr);
+    tree getFuncGenericTree()
     {
         return function;
     }
-    tree &getFuncRetval()
+    tree getFuncRetval()
     {
         return retval;
     }

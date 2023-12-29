@@ -1,6 +1,5 @@
 #include "MyIO.h"
 
-
 tree MyIO::printf_fn(NULL_TREE);
 
 tree MyIO::get_printf_addr()
@@ -40,12 +39,25 @@ tree MyIO::PrintFloat(tree expr)
 {
   const char *format_float = "%f\n";
   tree args[] = {build_string_literal(strlen(format_float) + 1, format_float),
-                 convert (double_type_node, expr)};
+                 convert(double_type_node, expr)};
 
   tree stmt = build_call_array(integer_type_node,
                                get_printf_addr(), 2, args);
 
   return stmt;
+}
+
+tree MyIO::Print(tree expr)
+{
+  if (TREE_TYPE(expr) == integer_type_node)
+  {
+    return MyIO::PrintInt(expr);
+  }
+  else if (TREE_TYPE(expr) == float_type_node)
+  {
+    return MyIO::PrintInt(expr);
+  }
+  return NULL;
 }
 
 MyIO::MyIO(/* args */)
