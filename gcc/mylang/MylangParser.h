@@ -45,7 +45,7 @@
 #ifndef YY_YY_MYLANGPARSER_H_INCLUDED
 # define YY_YY_MYLANGPARSER_H_INCLUDED
 // "%code requires" blocks.
-#line 39 "mylang.yy"
+#line 42 "mylang.yy"
 
 
  typedef union tree_node *tree;
@@ -185,7 +185,7 @@
 # define YYDEBUG 0
 #endif
 
-#line 35 "mylang.yy"
+#line 38 "mylang.yy"
 namespace mylang {
 #line 191 "MylangParser.h"
 
@@ -383,10 +383,12 @@ namespace mylang {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // INTLITERAL
+      // expr
       char dummy1[sizeof (int)];
 
+      // INTLITERAL
       // FLOATLITERAL
+      // ID
       char dummy2[sizeof (std::string)];
     };
 
@@ -433,7 +435,35 @@ namespace mylang {
     YYUNDEF = 257,                 // "invalid token"
     INTLITERAL = 258,              // INTLITERAL
     FLOATLITERAL = 259,            // FLOATLITERAL
-    EOL = 260                      // EOL
+    ID = 260,                      // ID
+    INT_TYPE = 261,                // INT_TYPE
+    IF = 262,                      // IF
+    ELSE = 263,                    // ELSE
+    WHILE = 264,                   // WHILE
+    RETURN = 265,                  // RETURN
+    ADD = 266,                     // ADD
+    SUB = 267,                     // SUB
+    MUL = 268,                     // MUL
+    DIV = 269,                     // DIV
+    ASSIGN = 270,                  // ASSIGN
+    SEMICOLON = 271,               // SEMICOLON
+    LPAREN = 272,                  // LPAREN
+    RPAREN = 273,                  // RPAREN
+    LBRACE = 274,                  // LBRACE
+    RBRACE = 275,                  // RBRACE
+    COMMA = 276,                   // COMMA
+    LESS_THAN = 277,               // LESS_THAN
+    GREATER_THAN = 278,            // GREATER_THAN
+    LESS_THAN_EQUAL = 279,         // LESS_THAN_EQUAL
+    GREATER_THAN_EQUAL = 280,      // GREATER_THAN_EQUAL
+    EQUAL = 281,                   // EQUAL
+    NOT_EQUAL = 282,               // NOT_EQUAL
+    LOGICAL_AND = 283,             // LOGICAL_AND
+    LOGICAL_OR = 284,              // LOGICAL_OR
+    LOGICAL_NOT = 285,             // LOGICAL_NOT
+    READ = 286,                    // READ
+    WRITE = 287,                   // WRITE
+    UNARY_OP = 288                 // UNARY_OP
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -450,20 +480,50 @@ namespace mylang {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 10, ///< Number of tokens.
+        YYNTOKENS = 34, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
         S_INTLITERAL = 3,                        // INTLITERAL
         S_FLOATLITERAL = 4,                      // FLOATLITERAL
-        S_EOL = 5,                               // EOL
-        S_6_ = 6,                                // '+'
-        S_7_ = 7,                                // '-'
-        S_8_ = 8,                                // '*'
-        S_9_ = 9,                                // '/'
-        S_YYACCEPT = 10,                         // $accept
-        S_input = 11                             // input
+        S_ID = 5,                                // ID
+        S_INT_TYPE = 6,                          // INT_TYPE
+        S_IF = 7,                                // IF
+        S_ELSE = 8,                              // ELSE
+        S_WHILE = 9,                             // WHILE
+        S_RETURN = 10,                           // RETURN
+        S_ADD = 11,                              // ADD
+        S_SUB = 12,                              // SUB
+        S_MUL = 13,                              // MUL
+        S_DIV = 14,                              // DIV
+        S_ASSIGN = 15,                           // ASSIGN
+        S_SEMICOLON = 16,                        // SEMICOLON
+        S_LPAREN = 17,                           // LPAREN
+        S_RPAREN = 18,                           // RPAREN
+        S_LBRACE = 19,                           // LBRACE
+        S_RBRACE = 20,                           // RBRACE
+        S_COMMA = 21,                            // COMMA
+        S_LESS_THAN = 22,                        // LESS_THAN
+        S_GREATER_THAN = 23,                     // GREATER_THAN
+        S_LESS_THAN_EQUAL = 24,                  // LESS_THAN_EQUAL
+        S_GREATER_THAN_EQUAL = 25,               // GREATER_THAN_EQUAL
+        S_EQUAL = 26,                            // EQUAL
+        S_NOT_EQUAL = 27,                        // NOT_EQUAL
+        S_LOGICAL_AND = 28,                      // LOGICAL_AND
+        S_LOGICAL_OR = 29,                       // LOGICAL_OR
+        S_LOGICAL_NOT = 30,                      // LOGICAL_NOT
+        S_READ = 31,                             // READ
+        S_WRITE = 32,                            // WRITE
+        S_UNARY_OP = 33,                         // UNARY_OP
+        S_YYACCEPT = 34,                         // $accept
+        S_program = 35,                          // program
+        S_function = 36,                         // function
+        S_args = 37,                             // args
+        S_block = 38,                            // block
+        S_statement_list = 39,                   // statement_list
+        S_statement = 40,                        // statement
+        S_expr = 41                              // expr
       };
     };
 
@@ -498,11 +558,13 @@ namespace mylang {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.move< int > (std::move (that.value));
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -575,11 +637,13 @@ namespace mylang {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.template destroy< int > ();
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.template destroy< std::string > ();
         break;
 
@@ -677,14 +741,6 @@ switch (yykind)
 #else
       symbol_type (int tok)
         : super_type (token_kind_type (tok))
-#endif
-      {}
-#if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, int v)
-        : super_type (token_kind_type (tok), std::move (v))
-#else
-      symbol_type (int tok, const int& v)
-        : super_type (token_kind_type (tok), v)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
@@ -793,14 +849,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INTLITERAL (int v)
+      make_INTLITERAL (std::string v)
       {
         return symbol_type (token::INTLITERAL, std::move (v));
       }
 #else
       static
       symbol_type
-      make_INTLITERAL (const int& v)
+      make_INTLITERAL (const std::string& v)
       {
         return symbol_type (token::INTLITERAL, v);
       }
@@ -823,16 +879,436 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_EOL ()
+      make_ID (std::string v)
       {
-        return symbol_type (token::EOL);
+        return symbol_type (token::ID, std::move (v));
       }
 #else
       static
       symbol_type
-      make_EOL ()
+      make_ID (const std::string& v)
       {
-        return symbol_type (token::EOL);
+        return symbol_type (token::ID, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INT_TYPE ()
+      {
+        return symbol_type (token::INT_TYPE);
+      }
+#else
+      static
+      symbol_type
+      make_INT_TYPE ()
+      {
+        return symbol_type (token::INT_TYPE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IF ()
+      {
+        return symbol_type (token::IF);
+      }
+#else
+      static
+      symbol_type
+      make_IF ()
+      {
+        return symbol_type (token::IF);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ELSE ()
+      {
+        return symbol_type (token::ELSE);
+      }
+#else
+      static
+      symbol_type
+      make_ELSE ()
+      {
+        return symbol_type (token::ELSE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHILE ()
+      {
+        return symbol_type (token::WHILE);
+      }
+#else
+      static
+      symbol_type
+      make_WHILE ()
+      {
+        return symbol_type (token::WHILE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RETURN ()
+      {
+        return symbol_type (token::RETURN);
+      }
+#else
+      static
+      symbol_type
+      make_RETURN ()
+      {
+        return symbol_type (token::RETURN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ADD ()
+      {
+        return symbol_type (token::ADD);
+      }
+#else
+      static
+      symbol_type
+      make_ADD ()
+      {
+        return symbol_type (token::ADD);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SUB ()
+      {
+        return symbol_type (token::SUB);
+      }
+#else
+      static
+      symbol_type
+      make_SUB ()
+      {
+        return symbol_type (token::SUB);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MUL ()
+      {
+        return symbol_type (token::MUL);
+      }
+#else
+      static
+      symbol_type
+      make_MUL ()
+      {
+        return symbol_type (token::MUL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DIV ()
+      {
+        return symbol_type (token::DIV);
+      }
+#else
+      static
+      symbol_type
+      make_DIV ()
+      {
+        return symbol_type (token::DIV);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ASSIGN ()
+      {
+        return symbol_type (token::ASSIGN);
+      }
+#else
+      static
+      symbol_type
+      make_ASSIGN ()
+      {
+        return symbol_type (token::ASSIGN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SEMICOLON ()
+      {
+        return symbol_type (token::SEMICOLON);
+      }
+#else
+      static
+      symbol_type
+      make_SEMICOLON ()
+      {
+        return symbol_type (token::SEMICOLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LPAREN ()
+      {
+        return symbol_type (token::LPAREN);
+      }
+#else
+      static
+      symbol_type
+      make_LPAREN ()
+      {
+        return symbol_type (token::LPAREN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RPAREN ()
+      {
+        return symbol_type (token::RPAREN);
+      }
+#else
+      static
+      symbol_type
+      make_RPAREN ()
+      {
+        return symbol_type (token::RPAREN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LBRACE ()
+      {
+        return symbol_type (token::LBRACE);
+      }
+#else
+      static
+      symbol_type
+      make_LBRACE ()
+      {
+        return symbol_type (token::LBRACE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RBRACE ()
+      {
+        return symbol_type (token::RBRACE);
+      }
+#else
+      static
+      symbol_type
+      make_RBRACE ()
+      {
+        return symbol_type (token::RBRACE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#else
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LESS_THAN ()
+      {
+        return symbol_type (token::LESS_THAN);
+      }
+#else
+      static
+      symbol_type
+      make_LESS_THAN ()
+      {
+        return symbol_type (token::LESS_THAN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_GREATER_THAN ()
+      {
+        return symbol_type (token::GREATER_THAN);
+      }
+#else
+      static
+      symbol_type
+      make_GREATER_THAN ()
+      {
+        return symbol_type (token::GREATER_THAN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LESS_THAN_EQUAL ()
+      {
+        return symbol_type (token::LESS_THAN_EQUAL);
+      }
+#else
+      static
+      symbol_type
+      make_LESS_THAN_EQUAL ()
+      {
+        return symbol_type (token::LESS_THAN_EQUAL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_GREATER_THAN_EQUAL ()
+      {
+        return symbol_type (token::GREATER_THAN_EQUAL);
+      }
+#else
+      static
+      symbol_type
+      make_GREATER_THAN_EQUAL ()
+      {
+        return symbol_type (token::GREATER_THAN_EQUAL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EQUAL ()
+      {
+        return symbol_type (token::EQUAL);
+      }
+#else
+      static
+      symbol_type
+      make_EQUAL ()
+      {
+        return symbol_type (token::EQUAL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NOT_EQUAL ()
+      {
+        return symbol_type (token::NOT_EQUAL);
+      }
+#else
+      static
+      symbol_type
+      make_NOT_EQUAL ()
+      {
+        return symbol_type (token::NOT_EQUAL);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOGICAL_AND ()
+      {
+        return symbol_type (token::LOGICAL_AND);
+      }
+#else
+      static
+      symbol_type
+      make_LOGICAL_AND ()
+      {
+        return symbol_type (token::LOGICAL_AND);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOGICAL_OR ()
+      {
+        return symbol_type (token::LOGICAL_OR);
+      }
+#else
+      static
+      symbol_type
+      make_LOGICAL_OR ()
+      {
+        return symbol_type (token::LOGICAL_OR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOGICAL_NOT ()
+      {
+        return symbol_type (token::LOGICAL_NOT);
+      }
+#else
+      static
+      symbol_type
+      make_LOGICAL_NOT ()
+      {
+        return symbol_type (token::LOGICAL_NOT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_READ ()
+      {
+        return symbol_type (token::READ);
+      }
+#else
+      static
+      symbol_type
+      make_READ ()
+      {
+        return symbol_type (token::READ);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WRITE ()
+      {
+        return symbol_type (token::WRITE);
+      }
+#else
+      static
+      symbol_type
+      make_WRITE ()
+      {
+        return symbol_type (token::WRITE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNARY_OP ()
+      {
+        return symbol_type (token::UNARY_OP);
+      }
+#else
+      static
+      symbol_type
+      make_UNARY_OP ()
+      {
+        return symbol_type (token::UNARY_OP);
       }
 #endif
 
@@ -879,7 +1355,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -1139,9 +1615,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 4,     ///< Last index in yytable_.
-      yynnts_ = 2,  ///< Number of nonterminal symbols.
-      yyfinal_ = 6 ///< Termination state number.
+      yylast_ = 215,     ///< Last index in yytable_.
+      yynnts_ = 8,  ///< Number of nonterminal symbols.
+      yyfinal_ = 5 ///< Termination state number.
     };
 
 
@@ -1152,19 +1628,19 @@ switch (yykind)
   };
 
 
-#line 35 "mylang.yy"
+#line 38 "mylang.yy"
 } // mylang
-#line 1158 "MylangParser.h"
+#line 1634 "MylangParser.h"
 
 
 // "%code provides" blocks.
-#line 45 "mylang.yy"
+#line 48 "mylang.yy"
 
     #define YY_DECL \
         int yylex(mylang::MylangParser::semantic_type *yylval, yyscan_t yyscanner)
     YY_DECL;
 
-#line 1168 "MylangParser.h"
+#line 1644 "MylangParser.h"
 
 
 #endif // !YY_YY_MYLANGPARSER_H_INCLUDED

@@ -42,6 +42,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <map>
 #include "config.h"
 #include "system.h"
 #include "coretypes.h"
@@ -65,7 +66,9 @@
 #include "tree-dump.h"
 #include "MylangScanner.h"
 
-#line 69 "MylangParser.cc"
+std::map<std::string, int> sym;
+
+#line 72 "MylangParser.cc"
 
 
 #include "MylangParser.h"
@@ -142,9 +145,9 @@
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-#line 35 "mylang.yy"
+#line 38 "mylang.yy"
 namespace mylang {
-#line 148 "MylangParser.cc"
+#line 151 "MylangParser.cc"
 
   /// Build a parser object.
   MylangParser::MylangParser (yyscan_t scanner_yyarg, tree  &myroot_yyarg)
@@ -176,11 +179,13 @@ namespace mylang {
   {
     switch (this->kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.copy< int > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -215,11 +220,13 @@ namespace mylang {
     super_type::move (s);
     switch (this->kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.move< int > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -323,11 +330,13 @@ namespace mylang {
   {
     switch (that.kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.YY_MOVE_OR_COPY< int > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
         break;
 
@@ -346,11 +355,13 @@ namespace mylang {
   {
     switch (that.kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.move< int > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.move< std::string > (YY_MOVE (that.value));
         break;
 
@@ -369,11 +380,13 @@ namespace mylang {
     state = that.state;
     switch (that.kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.copy< int > (that.value);
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.copy< std::string > (that.value);
         break;
 
@@ -390,11 +403,13 @@ namespace mylang {
     state = that.state;
     switch (that.kind ())
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         value.move< int > (that.value);
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         value.move< std::string > (that.value);
         break;
 
@@ -651,11 +666,13 @@ namespace mylang {
          when using variants.  */
       switch (yyr1_[yyn])
     {
-      case symbol_kind::S_INTLITERAL: // INTLITERAL
+      case symbol_kind::S_expr: // expr
         yylhs.value.emplace< int > ();
         break;
 
+      case symbol_kind::S_INTLITERAL: // INTLITERAL
       case symbol_kind::S_FLOATLITERAL: // FLOATLITERAL
+      case symbol_kind::S_ID: // ID
         yylhs.value.emplace< std::string > ();
         break;
 
@@ -673,28 +690,122 @@ namespace mylang {
         {
           switch (yyn)
             {
-  case 3: // input: INTLITERAL EOL
-#line 62 "mylang.yy"
-                     {myroot = build_int_cst(integer_type_node,
-                            yystack_[1].value.as < int > ());
-                        std::cout << yystack_[1].value.as < int > () << '\n';}
-#line 682 "MylangParser.cc"
+  case 12: // statement: INT_TYPE ID SEMICOLON
+#line 95 "mylang.yy"
+                                 { sym[yystack_[1].value.as < std::string > ()] = 0; }
+#line 697 "MylangParser.cc"
     break;
 
-  case 4: // input: FLOATLITERAL EOL
-#line 65 "mylang.yy"
-                       {printf("%s",yystack_[1].value.as < std::string > ().c_str());
-    REAL_VALUE_TYPE real_value;
-	real_from_string3 (&real_value, yystack_[1].value.as < std::string > ().c_str(),
-			   TYPE_MODE (float_type_node));
+  case 13: // statement: ID ASSIGN expr SEMICOLON
+#line 96 "mylang.yy"
+                                    { sym[yystack_[3].value.as < std::string > ()] = yystack_[1].value.as < int > (); }
+#line 703 "MylangParser.cc"
+    break;
 
-	myroot = build_real (float_type_node, real_value);
-    }
-#line 694 "MylangParser.cc"
+  case 18: // statement: WRITE ID SEMICOLON
+#line 101 "mylang.yy"
+                              {std::cout <<sym[yystack_[1].value.as < std::string > ()] <<"\n";}
+#line 709 "MylangParser.cc"
+    break;
+
+  case 19: // expr: ID
+#line 104 "mylang.yy"
+         { yylhs.value.as < int > () = sym[yystack_[0].value.as < std::string > ()]; }
+#line 715 "MylangParser.cc"
+    break;
+
+  case 20: // expr: INTLITERAL
+#line 105 "mylang.yy"
+                 { yylhs.value.as < int > () = strtoll(yystack_[0].value.as < std::string > ().c_str(), nullptr, 10);}
+#line 721 "MylangParser.cc"
+    break;
+
+  case 21: // expr: expr ADD expr
+#line 106 "mylang.yy"
+                    { yylhs.value.as < int > () = yystack_[2].value.as < int > () + yystack_[0].value.as < int > (); }
+#line 727 "MylangParser.cc"
+    break;
+
+  case 22: // expr: expr SUB expr
+#line 107 "mylang.yy"
+                    { yylhs.value.as < int > () = yystack_[2].value.as < int > () - yystack_[0].value.as < int > (); }
+#line 733 "MylangParser.cc"
+    break;
+
+  case 23: // expr: expr MUL expr
+#line 108 "mylang.yy"
+                    { yylhs.value.as < int > () = yystack_[2].value.as < int > () * yystack_[0].value.as < int > (); }
+#line 739 "MylangParser.cc"
+    break;
+
+  case 24: // expr: expr DIV expr
+#line 109 "mylang.yy"
+                    { yylhs.value.as < int > () = yystack_[2].value.as < int > () / yystack_[0].value.as < int > (); }
+#line 745 "MylangParser.cc"
+    break;
+
+  case 25: // expr: expr LESS_THAN expr
+#line 110 "mylang.yy"
+                          { yylhs.value.as < int > () = yystack_[2].value.as < int > () < yystack_[0].value.as < int > (); }
+#line 751 "MylangParser.cc"
+    break;
+
+  case 26: // expr: expr GREATER_THAN expr
+#line 111 "mylang.yy"
+                             { yylhs.value.as < int > () = yystack_[2].value.as < int > () > yystack_[0].value.as < int > (); }
+#line 757 "MylangParser.cc"
+    break;
+
+  case 27: // expr: expr LESS_THAN_EQUAL expr
+#line 112 "mylang.yy"
+                                { yylhs.value.as < int > () = yystack_[2].value.as < int > () <= yystack_[0].value.as < int > (); }
+#line 763 "MylangParser.cc"
+    break;
+
+  case 28: // expr: expr GREATER_THAN_EQUAL expr
+#line 113 "mylang.yy"
+                                   { yylhs.value.as < int > () = yystack_[2].value.as < int > () >= yystack_[0].value.as < int > (); }
+#line 769 "MylangParser.cc"
+    break;
+
+  case 29: // expr: expr EQUAL expr
+#line 114 "mylang.yy"
+                      { yylhs.value.as < int > () = yystack_[2].value.as < int > () == yystack_[0].value.as < int > (); }
+#line 775 "MylangParser.cc"
+    break;
+
+  case 30: // expr: expr NOT_EQUAL expr
+#line 115 "mylang.yy"
+                          { yylhs.value.as < int > () = yystack_[2].value.as < int > () != yystack_[0].value.as < int > (); }
+#line 781 "MylangParser.cc"
+    break;
+
+  case 31: // expr: expr LOGICAL_AND expr
+#line 116 "mylang.yy"
+                            { yylhs.value.as < int > () = yystack_[2].value.as < int > () && yystack_[0].value.as < int > (); }
+#line 787 "MylangParser.cc"
+    break;
+
+  case 32: // expr: expr LOGICAL_OR expr
+#line 117 "mylang.yy"
+                           { yylhs.value.as < int > () = yystack_[2].value.as < int > () || yystack_[0].value.as < int > (); }
+#line 793 "MylangParser.cc"
+    break;
+
+  case 33: // expr: LOGICAL_NOT expr
+#line 118 "mylang.yy"
+                       { yylhs.value.as < int > () = !yystack_[0].value.as < int > (); }
+#line 799 "MylangParser.cc"
+    break;
+
+  case 34: // expr: LPAREN expr RPAREN
+#line 119 "mylang.yy"
+                         { yylhs.value.as < int > () = yystack_[1].value.as < int > (); }
+#line 805 "MylangParser.cc"
     break;
 
 
-#line 698 "MylangParser.cc"
+#line 809 "MylangParser.cc"
 
             default:
               break;
@@ -883,62 +994,134 @@ namespace mylang {
 
 
 
-  const signed char MylangParser::yypact_ninf_ = -4;
+  const signed char MylangParser::yypact_ninf_ = -63;
 
   const signed char MylangParser::yytable_ninf_ = -1;
 
-  const signed char
+  const short
   MylangParser::yypact_[] =
   {
-      -3,    -2,    -1,     2,    -4,    -4,    -4
+       4,    -4,     5,   -63,     3,   -63,   -63,    20,    23,    49,
+     -63,    11,    48,   -63,   -63,    64,    -3,   -63,   -63,    56,
+      67,    69,    70,    18,    18,   -63,    18,    68,   -63,    33,
+      18,    72,    18,    18,   -63,    52,    71,   147,    74,    18,
+      18,    18,    18,   -63,    18,    18,    18,    18,    18,    18,
+      18,    18,    90,   -63,   109,   128,   -63,   -63,   -63,    -5,
+      -5,   -63,   -63,    39,    39,    39,    39,   190,   190,   173,
+     166,   -63,    73,    86,    11,    11,    87,    88,    83,   -63,
+      91,    11,    89,   -63
   };
 
   const signed char
   MylangParser::yydefact_[] =
   {
-       2,     0,     0,     0,     3,     4,     1
+       0,     0,     0,     2,     0,     1,     3,     5,     0,     0,
+       6,     0,     0,     9,     4,     0,     0,     7,    20,    19,
+       0,     0,     0,     0,     0,     8,     0,     0,    10,     0,
+       0,     0,     0,     0,    19,     0,     0,    33,     0,     0,
+       0,     0,     0,    11,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    12,     0,     0,    17,    34,    18,    21,
+      22,    23,    24,    25,    26,    27,    28,    29,    30,    31,
+      32,    13,     0,     0,     0,     0,     0,     0,    14,    16,
+       0,     0,     0,    15
   };
 
   const signed char
   MylangParser::yypgoto_[] =
   {
-      -4,    -4
+     -63,   -63,   122,   -63,   -62,   -63,   -63,    -8
   };
 
   const signed char
   MylangParser::yydefgoto_[] =
   {
-       0,     3
+       0,     2,     3,     9,    14,    16,    28,    29
   };
 
   const signed char
   MylangParser::yytable_[] =
   {
-       1,     2,     6,     4,     5
+      18,     4,    19,    20,    21,     5,    22,    23,    41,    42,
+       1,     1,    76,    77,    24,    35,    36,    25,    37,    82,
+       7,    18,    52,    34,    54,    55,     8,    26,    10,    27,
+      13,    59,    60,    61,    62,    24,    63,    64,    65,    66,
+      67,    68,    69,    70,    39,    40,    41,    42,    26,    43,
+      39,    40,    41,    42,    15,    44,    45,    46,    47,    48,
+      49,    50,    51,    39,    40,    41,    42,    11,    56,    17,
+      12,    30,    31,    38,    44,    45,    46,    47,    48,    49,
+      50,    51,    39,    40,    41,    42,    32,    33,    53,    57,
+      58,    80,    74,    44,    45,    46,    47,    48,    49,    50,
+      51,    39,    40,    41,    42,    75,    71,    78,    79,    83,
+      81,     0,    44,    45,    46,    47,    48,    49,    50,    51,
+      39,    40,    41,    42,     6,     0,     0,    72,     0,     0,
+       0,    44,    45,    46,    47,    48,    49,    50,    51,    39,
+      40,    41,    42,     0,     0,     0,    73,     0,     0,     0,
+      44,    45,    46,    47,    48,    49,    50,    51,    39,    40,
+      41,    42,     0,     0,     0,     0,     0,     0,     0,    44,
+      45,    46,    47,    48,    49,    50,    51,    39,    40,    41,
+      42,     0,     0,     0,    39,    40,    41,    42,    44,    45,
+      46,    47,    48,    49,    50,    44,    45,    46,    47,    48,
+      49,    39,    40,    41,    42,     0,     0,     0,     0,     0,
+       0,     0,    44,    45,    46,    47
   };
 
   const signed char
   MylangParser::yycheck_[] =
   {
-       3,     4,     0,     5,     5
+       3,     5,     5,     6,     7,     0,     9,    10,    13,    14,
+       6,     6,    74,    75,    17,    23,    24,    20,    26,    81,
+      17,     3,    30,     5,    32,    33,     6,    30,     5,    32,
+      19,    39,    40,    41,    42,    17,    44,    45,    46,    47,
+      48,    49,    50,    51,    11,    12,    13,    14,    30,    16,
+      11,    12,    13,    14,     6,    22,    23,    24,    25,    26,
+      27,    28,    29,    11,    12,    13,    14,    18,    16,     5,
+      21,    15,     5,     5,    22,    23,    24,    25,    26,    27,
+      28,    29,    11,    12,    13,    14,    17,    17,    16,    18,
+      16,     8,    19,    22,    23,    24,    25,    26,    27,    28,
+      29,    11,    12,    13,    14,    19,    16,    20,    20,    20,
+      19,    -1,    22,    23,    24,    25,    26,    27,    28,    29,
+      11,    12,    13,    14,     2,    -1,    -1,    18,    -1,    -1,
+      -1,    22,    23,    24,    25,    26,    27,    28,    29,    11,
+      12,    13,    14,    -1,    -1,    -1,    18,    -1,    -1,    -1,
+      22,    23,    24,    25,    26,    27,    28,    29,    11,    12,
+      13,    14,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    22,
+      23,    24,    25,    26,    27,    28,    29,    11,    12,    13,
+      14,    -1,    -1,    -1,    11,    12,    13,    14,    22,    23,
+      24,    25,    26,    27,    28,    22,    23,    24,    25,    26,
+      27,    11,    12,    13,    14,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    22,    23,    24,    25
   };
 
   const signed char
   MylangParser::yystos_[] =
   {
-       0,     3,     4,    11,     5,     5,     0
+       0,     6,    35,    36,     5,     0,    36,    17,     6,    37,
+       5,    18,    21,    19,    38,     6,    39,     5,     3,     5,
+       6,     7,     9,    10,    17,    20,    30,    32,    40,    41,
+      15,     5,    17,    17,     5,    41,    41,    41,     5,    11,
+      12,    13,    14,    16,    22,    23,    24,    25,    26,    27,
+      28,    29,    41,    16,    41,    41,    16,    18,    16,    41,
+      41,    41,    41,    41,    41,    41,    41,    41,    41,    41,
+      41,    16,    18,    18,    19,    19,    38,    38,    20,    20,
+       8,    19,    38,    20
   };
 
   const signed char
   MylangParser::yyr1_[] =
   {
-       0,    10,    11,    11,    11
+       0,    34,    35,    35,    36,    37,    37,    37,    38,    39,
+      39,    40,    40,    40,    40,    40,    40,    40,    40,    41,
+      41,    41,    41,    41,    41,    41,    41,    41,    41,    41,
+      41,    41,    41,    41,    41
   };
 
   const signed char
   MylangParser::yyr2_[] =
   {
-       0,     2,     0,     2,     2
+       0,     2,     1,     2,     6,     0,     2,     4,     3,     0,
+       2,     2,     3,     4,     7,    11,     7,     3,     3,     1,
+       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     2,     3
   };
 
 
@@ -949,7 +1132,12 @@ namespace mylang {
   const MylangParser::yytname_[] =
   {
   "\"end of file\"", "error", "\"invalid token\"", "INTLITERAL",
-  "FLOATLITERAL", "EOL", "'+'", "'-'", "'*'", "'/'", "$accept", "input", YY_NULLPTR
+  "FLOATLITERAL", "ID", "INT_TYPE", "IF", "ELSE", "WHILE", "RETURN", "ADD",
+  "SUB", "MUL", "DIV", "ASSIGN", "SEMICOLON", "LPAREN", "RPAREN", "LBRACE",
+  "RBRACE", "COMMA", "LESS_THAN", "GREATER_THAN", "LESS_THAN_EQUAL",
+  "GREATER_THAN_EQUAL", "EQUAL", "NOT_EQUAL", "LOGICAL_AND", "LOGICAL_OR",
+  "LOGICAL_NOT", "READ", "WRITE", "UNARY_OP", "$accept", "program",
+  "function", "args", "block", "statement_list", "statement", "expr", YY_NULLPTR
   };
 #endif
 
@@ -958,7 +1146,10 @@ namespace mylang {
   const signed char
   MylangParser::yyrline_[] =
   {
-       0,    61,    61,    62,    65
+       0,    78,    78,    79,    81,    83,    84,    85,    88,    90,
+      91,    94,    95,    96,    97,    98,    99,   100,   101,   104,
+     105,   106,   107,   108,   109,   110,   111,   112,   113,   114,
+     115,   116,   117,   118,   119
   };
 
   void
@@ -1001,7 +1192,7 @@ namespace mylang {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     8,     6,     2,     7,     2,     9,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1023,10 +1214,12 @@ namespace mylang {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33
     };
     // Last valid token kind.
-    const int code_max = 260;
+    const int code_max = 288;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1036,11 +1229,11 @@ namespace mylang {
       return symbol_kind::S_YYUNDEF;
   }
 
-#line 35 "mylang.yy"
+#line 38 "mylang.yy"
 } // mylang
-#line 1042 "MylangParser.cc"
+#line 1235 "MylangParser.cc"
 
-#line 74 "mylang.yy"
+#line 122 "mylang.yy"
 
  
 void mylang::MylangParser::error(const std::string& msg) {

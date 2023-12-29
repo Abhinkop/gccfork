@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <map>
 #include "config.h"
 #include "system.h"
 #include "coretypes.h"
@@ -24,6 +25,9 @@
 #include "context.h"
 #include "tree-dump.h"
 #include "MylangScanner.h"
+
+std::map<std::string, int> sym;
+
 %}
  
 %require "3.7.4"
@@ -48,27 +52,74 @@
     YY_DECL;
 }
  
-%token <int> INTLITERAL
+%token <std::string> INTLITERAL
 %token <std::string> FLOATLITERAL
+%token <std::string> ID
 
-%token EOL
-%left '+' '-'
-%left '*' '/'
+%token INT_TYPE IF ELSE WHILE RETURN
+%token ADD SUB MUL DIV ASSIGN SEMICOLON
+%token LPAREN RPAREN LBRACE RBRACE COMMA
+%token LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL EQUAL NOT_EQUAL
+%token LOGICAL_AND LOGICAL_OR LOGICAL_NOT
+%token READ WRITE
+
+%type <int> expr
+
+%left LOGICAL_NOT
+%left LOGICAL_OR
+%left LOGICAL_AND
+%left EQUAL NOT_EQUAL
+%left LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL
+%left ADD SUB
+%left MUL DIV
+%right UNARY_OP /* For unary operators like negation */
  
  
 %%
- 
-input: /* empty */ 
-    | INTLITERAL EOL {myroot = build_int_cst(integer_type_node,
-                            $1);
-                        std::cout << $1 << '\n';}
-    | FLOATLITERAL EOL {printf("%s",$1.c_str());
-    REAL_VALUE_TYPE real_value;
-	real_from_string3 (&real_value, $1.c_str(),
-			   TYPE_MODE (float_type_node));
+program : function
+        | program function
+        ; 
+function : INT_TYPE ID LPAREN args RPAREN block
 
-	myroot = build_real (float_type_node, real_value);
-    }
+args : 
+        | INT_TYPE ID
+        | args COMMA INT_TYPE ID 
+        ;
+
+block : LBRACE statement_list RBRACE
+ 
+statement_list: /* empty */
+        | statement_list statement
+        ;
+
+statement: expr SEMICOLON
+         | INT_TYPE ID SEMICOLON { sym[$2] = 0; }
+         | ID ASSIGN expr SEMICOLON { sym[$1] = $3; }
+         | IF LPAREN expr RPAREN LBRACE block RBRACE
+         | IF LPAREN expr RPAREN LBRACE block RBRACE ELSE LBRACE block RBRACE
+         | WHILE LPAREN expr RPAREN LBRACE block RBRACE
+         | RETURN expr SEMICOLON                {
+                                                   ; 
+                                                }
+         | WRITE ID SEMICOLON {std::cout <<sym[$2] <<"\n";}
+         ;
+
+expr: ID { $$ = sym[$1]; }
+    | INTLITERAL { $$ = strtoll($1.c_str(), nullptr, 10);}
+    | expr ADD expr { $$ = $1 + $3; }
+    | expr SUB expr { $$ = $1 - $3; }
+    | expr MUL expr { $$ = $1 * $3; }
+    | expr DIV expr { $$ = $1 / $3; }
+    | expr LESS_THAN expr { $$ = $1 < $3; }
+    | expr GREATER_THAN expr { $$ = $1 > $3; }
+    | expr LESS_THAN_EQUAL expr { $$ = $1 <= $3; }
+    | expr GREATER_THAN_EQUAL expr { $$ = $1 >= $3; }
+    | expr EQUAL expr { $$ = $1 == $3; }
+    | expr NOT_EQUAL expr { $$ = $1 != $3; }
+    | expr LOGICAL_AND expr { $$ = $1 && $3; }
+    | expr LOGICAL_OR expr { $$ = $1 || $3; }
+    | LOGICAL_NOT expr { $$ = !$2; }
+    | LPAREN expr RPAREN { $$ = $2; }
     ;
  
 %%

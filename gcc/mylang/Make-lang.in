@@ -24,6 +24,8 @@ mylang_OBJS = \
 	mylang/MylangScanner.o \
     mylang/mylang.o \
 	mylang/MyIO.o \
+	mylang/GenericFunction.o \
+	mylang/GeneratorUtils.o \
 	mylang/mylang-convert.o \
 	c-family/c-dump.o \
     $(END)

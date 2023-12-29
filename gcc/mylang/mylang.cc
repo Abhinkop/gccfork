@@ -1,3 +1,5 @@
+
+#include <vector>
 #include "config.h"
 #include "system.h"
 #include "coretypes.h"
@@ -20,6 +22,8 @@
 #include "context.h"
 #include "tree-dump.h"
 #include "MyIO.h"
+#include "GenericFunction.h"
+#include "GeneratorUtils.h"
 
 #include "MylangScanner.h"
 #include "MylangParser.h"
@@ -84,109 +88,22 @@ mylang_langhook_init(void)
   return true;
 }
 
-tree make_fndecl(tree return_type,
-                 const char *name,
-                 vec<tree> &param_types,
-                 bool is_variadic)
+static tree getDummyMain()
 {
-  tree fn_type;
-  if (is_variadic)
-    fn_type = build_varargs_function_type_array(return_type,
-                                                param_types.length(),
-                                                param_types.address());
-  else
-    fn_type = build_function_type_array(return_type,
-                                        param_types.length(),
-                                        param_types.address());
-  /* FIXME: this uses input_location: */
-  tree fndecl = build_fn_decl(name, fn_type);
 
-  return fndecl;
- }
+  std::vector<tree> args;
+  args.push_back(integer_type_node);
+  args.push_back(build_pointer_type(build_pointer_type(char_type_node)));
+  GenericFunction mainFunc(integer_type_node,"main",args);
 
-// static tree puts_fn(NULL_TREE);
+  // printf
+  tree t = MyIO::PrintFloat(GeneratorUtils::generateFloatConstant("1.2"));
+  mainFunc.addStatement(t);
+  t= MyIO::PrintInt(GeneratorUtils::generateIntConstant("88"));
+  mainFunc.addStatement(t);
+  tree retval = mainFunc.getFuncRetval();
 
-// tree get_puts_addr()
-// {
-//   if (puts_fn == NULL_TREE)
-//   {
-//     tree fndecl_type_param[] = {
-//         build_pointer_type(
-//             build_qualified_type(char_type_node,
-//                                  TYPE_QUAL_CONST)) /* const char* */
-//     };
-//     tree fndecl_type = build_function_type_array(integer_type_node, 1, fndecl_type_param);
-
-//     tree puts_fn_decl = build_fn_decl("puts", fndecl_type);
-//     DECL_EXTERNAL(puts_fn_decl) = 1;
-
-//     puts_fn = build1(ADDR_EXPR, build_pointer_type(fndecl_type), puts_fn_decl);
-//   }
-
-//   return puts_fn;
-// }
-
-// tree mydummyPrint()
-// {
-//   const char *format_float = "Abhin\n";
-//   tree arg[] = {build_string_literal(strlen(format_float) + 1, format_float)};
-//   tree puts_fn = get_puts_addr();
-
-//   tree stmt = build_call_array(integer_type_node,
-//                                puts_fn, 1, arg);
-//   return stmt;
-// }
-
-static void
-mylang_langhook_parse_file(void)
-{
-  // fprintf(stderr, "Hello gccmylang1!\n");
-
-  // gcc_assert(num_in_fnames == 1);
-  // FILE *file = fopen(in_fnames[0], "r");
-  // if (file == NULL)
-  // {
-  //   fatal_error(UNKNOWN_LOCATION, "cannot open filename %s: %m", in_fnames[0]);
-  // }
-
-  // yyscan_t scanner;
-  // yylex_init(&scanner);
-  // yyset_in(file, scanner);
-  tree myroot;
-  // mylang::MylangParser parser{scanner,myroot};
-  // std::cout.precision(10);
-  // parser.parse();
-
-  // std::cout <<"mylang.cc"<< myroot <<"\n";
-  // yylex_destroy(scanner);
-  // fclose(file);
-
-  auto dumps = g->get_dumps();
-
-  dumps->dump_start(TDI_original, &dump_flags);
-  
-  // Built type of main "int (int, char**)"
-  tree main_fndecl_type_param[] = {
-      integer_type_node,                                     /* int */
-      build_pointer_type(build_pointer_type(char_type_node)) /* char** */
-  };
-  tree main_fndecl_type = build_function_type_array(integer_type_node, 2, main_fndecl_type_param);
-  // Create function declaration "int main(int, char**)"
-  tree fndecl = build_fn_decl("main", main_fndecl_type);
-
-  /* Populate the function.  */
-  tree retval = build_decl(UNKNOWN_LOCATION, RESULT_DECL,
-                           NULL_TREE, integer_type_node);
-  DECL_ARTIFICIAL(retval) = 1;
-  DECL_IGNORED_P(retval) = 1;
-  DECL_RESULT(fndecl) = retval;
-
-  /* Create a BIND_EXPR, and within it, a statement list.  */
-  tree stmt_list = alloc_stmt_list();
-  tree_stmt_iterator stmt_iter = tsi_start(stmt_list);
-  tree block = make_node(BLOCK);
-  tree bind_expr = build3(BIND_EXPR, void_type_node, NULL, stmt_list, block);
-
+  // return value
   tree modify_retval = build2(MODIFY_EXPR,
                               integer_type_node,
                               retval,
@@ -194,38 +111,46 @@ mylang_langhook_parse_file(void)
   tree return_stmt = build1(RETURN_EXPR,
                             integer_type_node,
                             modify_retval);
-                            
-  REAL_VALUE_TYPE real_value;
-	real_from_string3 (&real_value, "1.2",
-			   TYPE_MODE (float_type_node));
+  mainFunc.addStatement(return_stmt);
 
-	myroot = build_real (float_type_node, real_value);
+  return mainFunc.getFuncGenericTree();
+}
 
-  tree myprintsstmtF = MyIO::PrintFloat(myroot);
-  tsi_link_after(&stmt_iter, myprintsstmtF, TSI_CONTINUE_LINKING);
-  myroot = build_int_cst(integer_type_node,
-                            100);
+static void
+mylang_langhook_parse_file(void)
+{
+    std::cout <<"parsing starts" <<"\n";
 
-  tree myprintsstmtI = MyIO::PrintInt(myroot);
-  tsi_link_after(&stmt_iter, myprintsstmtI, TSI_CONTINUE_LINKING);
-  tsi_link_after(&stmt_iter, return_stmt, TSI_CONTINUE_LINKING);
+  gcc_assert(num_in_fnames == 1);
+  FILE *file = fopen(in_fnames[0], "r");
+  if (file == NULL)
+  {
+    fatal_error(UNKNOWN_LOCATION, "cannot open filename %s: %m", in_fnames[0]);
+  }
 
-  DECL_INITIAL(fndecl) = block;
-  BLOCK_SUPERCONTEXT(block) = fndecl;
+  yyscan_t scanner;
+  yylex_init(&scanner);
+  yyset_in(file, scanner);
+  tree myroot;
+  mylang::MylangParser parser{scanner,myroot};
+  std::cout.precision(10);
+  parser.parse();
 
-  /* how to add to function? the following appears to be how to
-     set the body of a fndecl: */
-  DECL_SAVED_TREE(fndecl) = bind_expr;
+  std::cout <<"parsing ends" <<"\n";
+  yylex_destroy(scanner);
+  fclose(file);
 
-  /* Ensure that locals appear in the debuginfo.  */
-  BLOCK_VARS(block) = BIND_EXPR_VARS(bind_expr);
-  DECL_EXTERNAL(fndecl) = 0;
-  DECL_PRESERVE_P(fndecl) = 1;
-  dump_node(fndecl, dump_flags, dumps->get_dump_file_info(TDI_original)->pstream);
+  // auto dumps = g->get_dumps();
+
+  // dumps->dump_start(TDI_original, &dump_flags);
+
+  // dump_node(fndecl, dump_flags, dumps->get_dump_file_info(TDI_original)->pstream);
   // dump_function(TDI_original,fndecl);
-  dumps->dump_finish(TDI_original);
-  dump_tree_statistics();
+  // dumps->dump_finish(TDI_original);
+  // dump_tree_statistics();
+  
   // Convert from GENERIC to GIMPLE
+  tree fndecl = getDummyMain();
   gimplify_function_tree(fndecl);
 
   // Insert it into the graph
