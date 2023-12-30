@@ -952,8 +952,98 @@ namespace mylang {
 #line 953 "MylangParser.cc"
     break;
 
+  case 19: // expr: expr ADD expr
+#line 182 "mylang.yy"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('+',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 959 "MylangParser.cc"
+    break;
 
-#line 957 "MylangParser.cc"
+  case 20: // expr: expr MINUS expr
+#line 183 "mylang.yy"
+                      { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('-',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 965 "MylangParser.cc"
+    break;
+
+  case 21: // expr: expr MUL expr
+#line 184 "mylang.yy"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('*',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 971 "MylangParser.cc"
+    break;
+
+  case 22: // expr: expr DIV expr
+#line 185 "mylang.yy"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('/',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 977 "MylangParser.cc"
+    break;
+
+  case 23: // expr: expr LESS_THAN expr
+#line 186 "mylang.yy"
+                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 983 "MylangParser.cc"
+    break;
+
+  case 24: // expr: expr GREATER_THAN expr
+#line 187 "mylang.yy"
+                             { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 989 "MylangParser.cc"
+    break;
+
+  case 25: // expr: expr LESS_THAN_EQUAL expr
+#line 188 "mylang.yy"
+                                { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 995 "MylangParser.cc"
+    break;
+
+  case 26: // expr: expr GREATER_THAN_EQUAL expr
+#line 189 "mylang.yy"
+                                   { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1001 "MylangParser.cc"
+    break;
+
+  case 27: // expr: expr EQUAL expr
+#line 190 "mylang.yy"
+                      { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1007 "MylangParser.cc"
+    break;
+
+  case 28: // expr: expr NOT_EQUAL expr
+#line 191 "mylang.yy"
+                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::NOT_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1013 "MylangParser.cc"
+    break;
+
+  case 29: // expr: expr LOGICAL_AND expr
+#line 192 "mylang.yy"
+                            { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::AND,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1019 "MylangParser.cc"
+    break;
+
+  case 30: // expr: expr LOGICAL_OR expr
+#line 193 "mylang.yy"
+                           { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::OR,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1025 "MylangParser.cc"
+    break;
+
+  case 31: // expr: LOGICAL_NOT expr
+#line 194 "mylang.yy"
+                       { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanUnaryNotOpTree(yystack_[0].value.as < tree > ()); }
+#line 1031 "MylangParser.cc"
+    break;
+
+  case 32: // expr: MINUS expr
+#line 195 "mylang.yy"
+                              { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticUnaryMinusOpTree(yystack_[0].value.as < tree > ()); }
+#line 1037 "MylangParser.cc"
+    break;
+
+  case 33: // expr: LPAREN expr RPAREN
+#line 196 "mylang.yy"
+                         { yylhs.value.as < tree > () = yystack_[1].value.as < tree > (); }
+#line 1043 "MylangParser.cc"
+    break;
+
+
+#line 1047 "MylangParser.cc"
 
             default:
               break;
@@ -1142,79 +1232,124 @@ namespace mylang {
 
 
 
-  const signed char MylangParser::yypact_ninf_ = -17;
+  const signed char MylangParser::yypact_ninf_ = -18;
 
   const signed char MylangParser::yytable_ninf_ = -1;
 
-  const signed char
+  const short
   MylangParser::yypact_[] =
   {
-       0,     7,     4,   -17,    -5,    -2,   -17,   -17,   -17,   -17,
-      10,    -3,    13,   -13,   -17,     5,    14,     8,   -17,    16,
-     -17,     6,   -17,   -17,    17,     8,     9,   -17,    11,    12,
-     -17,    19,    15,   -17,   -17,   -17,   -17,   -17
+       0,     7,     2,   -18,    -6,    -3,   -18,   -18,   -18,   -18,
+      10,    29,    17,   -14,   -18,    18,    35,    33,    33,   -18,
+      33,    36,    33,   -18,    54,   -18,   -18,    37,    33,    32,
+     -18,    75,    96,   138,    44,   -18,    33,    33,    33,   -18,
+      33,    33,    33,    33,    33,    33,    33,    33,    33,    42,
+     117,   -18,   -18,   -18,   -18,    -4,   -18,   -18,     4,     4,
+       4,     4,   166,   166,    31,   159,    -4,   -18,   -18
   };
 
   const signed char
   MylangParser::yydefact_[] =
   {
        0,     0,     0,     2,     0,     0,     1,     3,    10,     4,
-       6,     0,     0,     0,    18,    17,     0,     0,     9,     0,
-      11,     0,     7,     5,     0,     0,     0,    17,     0,     0,
-      12,     0,     0,    13,    15,    16,     8,    14
+       6,     0,     0,     0,    18,    17,     0,     0,     0,     9,
+       0,     0,     0,    11,     0,     7,     5,     0,     0,     0,
+      17,     0,     0,    31,     0,    32,     0,     0,     0,    12,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    13,    15,    33,    16,    19,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    20,     8,    14
   };
 
   const signed char
   MylangParser::yypgoto_[] =
   {
-     -17,   -17,    24,   -17,   -17,   -17,   -17,   -17,   -16
+     -18,   -18,    49,   -18,   -18,   -18,   -18,   -18,   -17
   };
 
   const signed char
   MylangParser::yydefgoto_[] =
   {
-       0,     2,     3,     4,    13,     9,    11,    20,    21
+       0,     2,     3,     4,    13,     9,    11,    23,    24
   };
 
   const signed char
   MylangParser::yytable_[] =
   {
-      14,    28,    15,    16,     6,    23,     1,    17,    24,    32,
-       1,    14,     5,    27,     8,    10,    12,    18,    22,    26,
-      25,    29,    30,    31,    36,    33,     7,    34,    35,    19,
-       0,    37
+      31,    32,     6,    33,    26,    35,     1,    27,     1,    37,
+      38,    50,     5,     8,    10,    36,    12,    37,    38,    55,
+      56,    57,    25,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,    14,    28,    15,    16,    14,    48,    30,    17,
+      29,    34,    36,    49,    37,    38,    18,    67,    51,    19,
+      18,     7,     0,    40,    41,    42,    43,    44,    45,    20,
+      54,    21,    22,    20,    48,    36,    22,    37,    38,     0,
+      39,     0,     0,     0,     0,     0,    40,    41,    42,    43,
+      44,    45,    46,    47,     0,     0,    36,    48,    37,    38,
+       0,    52,     0,     0,     0,     0,     0,    40,    41,    42,
+      43,    44,    45,    46,    47,     0,     0,    36,    48,    37,
+      38,     0,     0,     0,    53,     0,     0,     0,    40,    41,
+      42,    43,    44,    45,    46,    47,     0,     0,    36,    48,
+      37,    38,     0,    68,     0,     0,     0,     0,     0,    40,
+      41,    42,    43,    44,    45,    46,    47,     0,     0,    36,
+      48,    37,    38,     0,     0,     0,     0,     0,     0,     0,
+      40,    41,    42,    43,    44,    45,    46,    47,     0,     0,
+      36,    48,    37,    38,     0,     0,     0,    36,     0,    37,
+      38,    40,    41,    42,    43,    44,    45,    46,    40,    41,
+      42,    43,    48,     0,     0,     0,     0,     0,     0,    48
   };
 
   const signed char
   MylangParser::yycheck_[] =
   {
-       3,    17,     5,     6,     0,    18,     6,    10,    21,    25,
-       6,     3,     5,     5,    19,    17,     6,    20,     5,     5,
-      15,     5,    16,     6,     5,    16,     2,    16,    16,    32,
-      -1,    16
+      17,    18,     0,    20,    18,    22,     6,    21,     6,    13,
+      14,    28,     5,    19,    17,    11,     6,    13,    14,    36,
+      37,    38,     5,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,     3,    15,     5,     6,     3,    33,     5,    10,
+       5,     5,    11,     6,    13,    14,    17,     5,    16,    20,
+      17,     2,    -1,    22,    23,    24,    25,    26,    27,    30,
+      16,    32,    33,    30,    33,    11,    33,    13,    14,    -1,
+      16,    -1,    -1,    -1,    -1,    -1,    22,    23,    24,    25,
+      26,    27,    28,    29,    -1,    -1,    11,    33,    13,    14,
+      -1,    16,    -1,    -1,    -1,    -1,    -1,    22,    23,    24,
+      25,    26,    27,    28,    29,    -1,    -1,    11,    33,    13,
+      14,    -1,    -1,    -1,    18,    -1,    -1,    -1,    22,    23,
+      24,    25,    26,    27,    28,    29,    -1,    -1,    11,    33,
+      13,    14,    -1,    16,    -1,    -1,    -1,    -1,    -1,    22,
+      23,    24,    25,    26,    27,    28,    29,    -1,    -1,    11,
+      33,    13,    14,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      22,    23,    24,    25,    26,    27,    28,    29,    -1,    -1,
+      11,    33,    13,    14,    -1,    -1,    -1,    11,    -1,    13,
+      14,    22,    23,    24,    25,    26,    27,    28,    22,    23,
+      24,    25,    33,    -1,    -1,    -1,    -1,    -1,    -1,    33
   };
 
   const signed char
   MylangParser::yystos_[] =
   {
-       0,     6,    35,    36,    37,     5,     0,    36,    19,    39,
-      17,    40,     6,    38,     3,     5,     6,    10,    20,    32,
-      41,    42,     5,    18,    21,    15,     5,     5,    42,     5,
-      16,     6,    42,    16,    16,    16,     5,    16
+       0,     6,    36,    37,    38,     5,     0,    37,    19,    40,
+      17,    41,     6,    39,     3,     5,     6,    10,    17,    20,
+      30,    32,    33,    42,    43,     5,    18,    21,    15,     5,
+       5,    43,    43,    43,     5,    43,    11,    13,    14,    16,
+      22,    23,    24,    25,    26,    27,    28,    29,    33,     6,
+      43,    16,    16,    18,    16,    43,    43,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    43,     5,    16
   };
 
   const signed char
   MylangParser::yyr1_[] =
   {
-       0,    34,    35,    35,    36,    37,    38,    38,    38,    39,
-      40,    40,    41,    41,    41,    41,    41,    42,    42
+       0,    35,    36,    36,    37,    38,    39,    39,    39,    40,
+      41,    41,    42,    42,    42,    42,    42,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    43,    43,    43,    43,
+      43,    43,    43,    43
   };
 
   const signed char
   MylangParser::yyr2_[] =
   {
        0,     2,     1,     2,     2,     5,     0,     2,     4,     3,
-       0,     2,     2,     3,     4,     3,     3,     1,     1
+       0,     2,     2,     3,     4,     3,     3,     1,     1,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     2,     2,     3
   };
 
 
@@ -1229,7 +1364,7 @@ namespace mylang {
   "SUB", "MUL", "DIV", "ASSIGN", "SEMICOLON", "LPAREN", "RPAREN", "LBRACE",
   "RBRACE", "COMMA", "LESS_THAN", "GREATER_THAN", "LESS_THAN_EQUAL",
   "GREATER_THAN_EQUAL", "EQUAL", "NOT_EQUAL", "LOGICAL_AND", "LOGICAL_OR",
-  "LOGICAL_NOT", "READ", "WRITE", "UNARY_OP", "$accept", "program",
+  "LOGICAL_NOT", "READ", "WRITE", "MINUS", "UMINUS", "$accept", "program",
   "function", "func_decl", "args", "block", "statement_list", "statement",
   "expr", YY_NULLPTR
   };
@@ -1241,7 +1376,9 @@ namespace mylang {
   MylangParser::yyrline_[] =
   {
        0,    92,    92,    98,   102,   109,   115,   119,   123,   129,
-     134,   138,   145,   146,   152,   156,   168,   174,   178
+     134,   138,   145,   146,   152,   156,   168,   174,   178,   182,
+     183,   184,   185,   186,   187,   188,   189,   190,   191,   192,
+     193,   194,   195,   196
   };
 
   void
@@ -1308,10 +1445,10 @@ namespace mylang {
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34
     };
     // Last valid token kind.
-    const int code_max = 288;
+    const int code_max = 289;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1323,9 +1460,9 @@ namespace mylang {
 
 #line 46 "mylang.yy"
 } // mylang
-#line 1327 "MylangParser.cc"
+#line 1464 "MylangParser.cc"
 
-#line 184 "mylang.yy"
+#line 199 "mylang.yy"
 
  
 void mylang::MylangParser::error(const std::string& msg) {

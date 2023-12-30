@@ -106,11 +106,13 @@ static tree getDummyMain()
   stmtList.addStatement(GeneratorUtils::generateDeclareExpr(var2));
   tree floatConst = GeneratorUtils::generateFloatConstant("1111.1");
   stmtList.addStatement(GeneratorUtils::generateAssignmentTree(var2, floatConst));
+
+  tree add = GeneratorUtils::generateArithimaticBinaryOpTree('+',var1,var2);
   // printf
-  tree t = MyIO::PrintFloat(var2);
+  tree t = MyIO::Print(add);
   stmtList.addStatement(t);
 
-  t = MyIO::PrintInt(var1);
+  t = MyIO::Print(var1);
   stmtList.addStatement(t);
 
   // return value

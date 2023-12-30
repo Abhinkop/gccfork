@@ -853,7 +853,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 41 "mylang.l"
-{ return MylangParser::token::SUB; }
+{ return MylangParser::token::MINUS; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP

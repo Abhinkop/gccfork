@@ -28,10 +28,9 @@ private:
     /* data */
     MyIO(/* args */);
     static tree get_printf_addr();
-
-public:
-    ~MyIO();
     static tree PrintInt(tree expr);
     static tree PrintFloat(tree expr);
+public:
+    ~MyIO();
     static tree Print(tree expr);
 };

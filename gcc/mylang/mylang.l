@@ -38,7 +38,7 @@ WS          [ \t\n]
                     }
 
 "+"         { return MylangParser::token::ADD; }
-"-"         { return MylangParser::token::SUB; }
+"-"         { return MylangParser::token::MINUS; }
 "*"         { return MylangParser::token::MUL; }
 "/"         { return MylangParser::token::DIV; }
 "="         { return MylangParser::token::ASSIGN; }

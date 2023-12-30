@@ -475,7 +475,8 @@ namespace mylang {
     LOGICAL_NOT = 285,             // LOGICAL_NOT
     READ = 286,                    // READ
     WRITE = 287,                   // WRITE
-    UNARY_OP = 288                 // UNARY_OP
+    MINUS = 288,                   // MINUS
+    UMINUS = 289                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -492,7 +493,7 @@ namespace mylang {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 34, ///< Number of tokens.
+        YYNTOKENS = 35, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -527,16 +528,17 @@ namespace mylang {
         S_LOGICAL_NOT = 30,                      // LOGICAL_NOT
         S_READ = 31,                             // READ
         S_WRITE = 32,                            // WRITE
-        S_UNARY_OP = 33,                         // UNARY_OP
-        S_YYACCEPT = 34,                         // $accept
-        S_program = 35,                          // program
-        S_function = 36,                         // function
-        S_func_decl = 37,                        // func_decl
-        S_args = 38,                             // args
-        S_block = 39,                            // block
-        S_statement_list = 40,                   // statement_list
-        S_statement = 41,                        // statement
-        S_expr = 42                              // expr
+        S_MINUS = 33,                            // MINUS
+        S_UMINUS = 34,                           // UMINUS
+        S_YYACCEPT = 35,                         // $accept
+        S_program = 36,                          // program
+        S_function = 37,                         // function
+        S_func_decl = 38,                        // func_decl
+        S_args = 39,                             // args
+        S_block = 40,                            // block
+        S_statement_list = 41,                   // statement_list
+        S_statement = 42,                        // statement
+        S_expr = 43                              // expr
       };
     };
 
@@ -1374,16 +1376,31 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_UNARY_OP ()
+      make_MINUS ()
       {
-        return symbol_type (token::UNARY_OP);
+        return symbol_type (token::MINUS);
       }
 #else
       static
       symbol_type
-      make_UNARY_OP ()
+      make_MINUS ()
       {
-        return symbol_type (token::UNARY_OP);
+        return symbol_type (token::MINUS);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UMINUS ()
+      {
+        return symbol_type (token::UMINUS);
+      }
+#else
+      static
+      symbol_type
+      make_UMINUS ()
+      {
+        return symbol_type (token::UMINUS);
       }
 #endif
 
@@ -1430,7 +1447,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -1690,7 +1707,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 31,     ///< Last index in yytable_.
+      yylast_ = 199,     ///< Last index in yytable_.
       yynnts_ = 9,  ///< Number of nonterminal symbols.
       yyfinal_ = 6 ///< Termination state number.
     };
@@ -1705,7 +1722,7 @@ switch (yykind)
 
 #line 46 "mylang.yy"
 } // mylang
-#line 1709 "MylangParser.h"
+#line 1726 "MylangParser.h"
 
 
 // "%code provides" blocks.
@@ -1715,7 +1732,7 @@ switch (yykind)
         int yylex(mylang::MylangParser::semantic_type *yylval, yyscan_t yyscanner)
     YY_DECL;
 
-#line 1719 "MylangParser.h"
+#line 1736 "MylangParser.h"
 
 
 #endif // !YY_YY_MYLANGPARSER_H_INCLUDED

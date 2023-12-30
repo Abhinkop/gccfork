@@ -78,14 +78,14 @@ GenericStatementList* current_stmt_list = NULL;
 %type <GenericBlock*> block
 %type <std::vector<tree>> args
 
-%left LOGICAL_NOT
+%right LOGICAL_NOT
 %left LOGICAL_OR
 %left LOGICAL_AND
 %left EQUAL NOT_EQUAL
 %left LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL
-%left ADD SUB
+%left ADD MINUS
 %left MUL DIV
-%right UNARY_OP /* For unary operators like negation */
+%right UMINUS  
  
  
 %%
@@ -179,6 +179,21 @@ expr: ID            {
                         std::cout << "Matched INTLITERAL" << std::endl;
                         $$ = GeneratorUtils::generateIntConstant(std::string($1));
                     }
+    | expr ADD expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('+',$1, $3); }
+    | expr MINUS expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('-',$1, $3); }
+    | expr MUL expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('*',$1, $3); }
+    | expr DIV expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('/',$1, $3); }
+    | expr LESS_THAN expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN,$1, $3); }
+    | expr GREATER_THAN expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN,$1, $3); }
+    | expr LESS_THAN_EQUAL expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN_EQUAL,$1, $3); }
+    | expr GREATER_THAN_EQUAL expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN_EQUAL,$1, $3); }
+    | expr EQUAL expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::EQUAL,$1, $3); }
+    | expr NOT_EQUAL expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::NOT_EQUAL,$1, $3); }
+    | expr LOGICAL_AND expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::AND,$1, $3); }
+    | expr LOGICAL_OR expr { $$ = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::OR,$1, $3); }
+    | LOGICAL_NOT expr { $$ = GeneratorUtils::generateBooleanUnaryNotOpTree($2); }
+    | MINUS expr %prec UMINUS { $$ = GeneratorUtils::generateArithimaticUnaryMinusOpTree($2); }
+    | LPAREN expr RPAREN { $$ = $2; }
                 ;
  
 %%

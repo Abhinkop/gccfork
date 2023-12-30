@@ -23,6 +23,18 @@
 #include "tree-dump.h"
 #include "stringpool.h"
 
+enum BooleanOpcode{
+    NOT,
+    AND,
+    OR,
+    EQUAL,
+    NOT_EQUAL,
+    GREATER_THAN,
+    GREATER_THAN_EQUAL,
+    LESSER_THAN,
+    LESSER_THAN_EQUAL,
+};
+
 class GeneratorUtils
 {
 public:
@@ -31,4 +43,8 @@ public:
     static tree generateVariableDeclaration(const std::string &name, tree type);
     static tree generateDeclareExpr(tree decl);
     static tree generateAssignmentTree(tree decl, tree expr);
+    static tree generateArithimaticBinaryOpTree(char x,tree exp1, tree exp2);
+    static tree generateBooleanBinaryOpTree(BooleanOpcode opcode,tree exp1, tree exp2);
+    static tree generateArithimaticUnaryMinusOpTree(tree exp1);
+    static tree generateBooleanUnaryNotOpTree(tree exp1);
 };

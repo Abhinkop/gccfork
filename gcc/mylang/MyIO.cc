@@ -49,15 +49,15 @@ tree MyIO::PrintFloat(tree expr)
 
 tree MyIO::Print(tree expr)
 {
-  if (TREE_TYPE(expr) == integer_type_node)
+  if (TREE_TYPE(expr) == integer_type_node || TREE_TYPE(expr) == boolean_type_node)
   {
     return MyIO::PrintInt(expr);
   }
   else if (TREE_TYPE(expr) == float_type_node)
   {
-    return MyIO::PrintInt(expr);
+    return MyIO::PrintFloat(expr);
   }
-  return NULL;
+  return tree(error_mark_node);
 }
 
 MyIO::MyIO(/* args */)
