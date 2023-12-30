@@ -65,7 +65,7 @@ GenericStatementList* current_stmt_list = NULL;
 %token <std::string> FLOATLITERAL
 %token <std::string> ID
 
-%token INT_TYPE IF ELSE WHILE RETURN
+%token BOOLEAN_TYPE FLOAT_TYPE INT_TYPE IF ELSE WHILE RETURN
 %token ADD SUB MUL DIV ASSIGN SEMICOLON
 %token LPAREN RPAREN LBRACE RBRACE COMMA
 %token LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL EQUAL NOT_EQUAL
@@ -74,6 +74,7 @@ GenericStatementList* current_stmt_list = NULL;
 
 %type <tree> expr
 %type <tree> statement
+%type <tree> datatype
 %type <GenericStatementList*> statement_list
 %type <GenericBlock*> block
 %type <std::vector<tree>> args
@@ -106,23 +107,28 @@ function : func_decl block {
                             }
             ;
     
-func_decl : INT_TYPE ID LPAREN args RPAREN {
+func_decl : datatype ID LPAREN args RPAREN {
                                                     std::cout << "Matched INT_TYPE ID LPAREN args RPAREN" <<std::endl;
-                                                    currentFunction = new GenericFunction(integer_type_node, $2, $4);
+                                                    currentFunction = new GenericFunction($1, $2, $4);
                                                 }
                                                 ;
+
+datatype :  INT_TYPE{$$ = integer_type_node;}
+            |FLOAT_TYPE {$$ = float_type_node;}
+            |BOOLEAN_TYPE{$$ = boolean_type_node;}
+            ;
 
 args :                  {
                             std::cout << "Matched Empty args" << std::endl;
                             $$.clear();
                         }
-        | INT_TYPE ID   {
+        | datatype ID   {
                             std::cout << "Matched INT_TYPE ID" << std::endl;
-                            $$.push_back(integer_type_node);
+                            $$.push_back($1);
                         }
-        | args COMMA INT_TYPE ID    {
+        | args COMMA datatype ID    {
                                         std::cout << "Matched args COMMA INT_TYPE ID" << std::endl;
-                                        $$.push_back(integer_type_node);
+                                        $$.push_back($3);
                                     }      
         ;
 
@@ -143,9 +149,9 @@ statement_list: /* empty */ {
         ;
 
 statement: expr SEMICOLON
-         | INT_TYPE ID SEMICOLON    { 
+         | datatype ID SEMICOLON    { 
                                         std::cout << "Matched INT_TYPE ID SEMICOLON" << std::endl;
-                                        tree varDecl = GeneratorUtils::generateVariableDeclaration("$2", integer_type_node);
+                                        tree varDecl = GeneratorUtils::generateVariableDeclaration("$2", $1);
                                         sym[$2] = varDecl;
                                         $$ = GeneratorUtils::generateDeclareExpr(sym[$2]);
                                     }
@@ -179,6 +185,10 @@ expr: ID            {
                         std::cout << "Matched INTLITERAL" << std::endl;
                         $$ = GeneratorUtils::generateIntConstant(std::string($1));
                     }
+    | FLOATLITERAL    { 
+                        std::cout << "Matched FLOATLITERAL" << std::endl;
+                        $$ = GeneratorUtils::generateFloatConstant(std::string($1));
+                    }
     | expr ADD expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('+',$1, $3); }
     | expr MINUS expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('-',$1, $3); }
     | expr MUL expr { $$ = GeneratorUtils::generateArithimaticBinaryOpTree('*',$1, $3); }
@@ -194,7 +204,7 @@ expr: ID            {
     | LOGICAL_NOT expr { $$ = GeneratorUtils::generateBooleanUnaryNotOpTree($2); }
     | MINUS expr %prec UMINUS { $$ = GeneratorUtils::generateArithimaticUnaryMinusOpTree($2); }
     | LPAREN expr RPAREN { $$ = $2; }
-                ;
+    ;
  
 %%
  

@@ -399,6 +399,7 @@ namespace mylang {
       // args
       char dummy4[sizeof (std::vector<tree>)];
 
+      // datatype
       // statement
       // expr
       char dummy5[sizeof (tree)];
@@ -448,35 +449,37 @@ namespace mylang {
     INTLITERAL = 258,              // INTLITERAL
     FLOATLITERAL = 259,            // FLOATLITERAL
     ID = 260,                      // ID
-    INT_TYPE = 261,                // INT_TYPE
-    IF = 262,                      // IF
-    ELSE = 263,                    // ELSE
-    WHILE = 264,                   // WHILE
-    RETURN = 265,                  // RETURN
-    ADD = 266,                     // ADD
-    SUB = 267,                     // SUB
-    MUL = 268,                     // MUL
-    DIV = 269,                     // DIV
-    ASSIGN = 270,                  // ASSIGN
-    SEMICOLON = 271,               // SEMICOLON
-    LPAREN = 272,                  // LPAREN
-    RPAREN = 273,                  // RPAREN
-    LBRACE = 274,                  // LBRACE
-    RBRACE = 275,                  // RBRACE
-    COMMA = 276,                   // COMMA
-    LESS_THAN = 277,               // LESS_THAN
-    GREATER_THAN = 278,            // GREATER_THAN
-    LESS_THAN_EQUAL = 279,         // LESS_THAN_EQUAL
-    GREATER_THAN_EQUAL = 280,      // GREATER_THAN_EQUAL
-    EQUAL = 281,                   // EQUAL
-    NOT_EQUAL = 282,               // NOT_EQUAL
-    LOGICAL_AND = 283,             // LOGICAL_AND
-    LOGICAL_OR = 284,              // LOGICAL_OR
-    LOGICAL_NOT = 285,             // LOGICAL_NOT
-    READ = 286,                    // READ
-    WRITE = 287,                   // WRITE
-    MINUS = 288,                   // MINUS
-    UMINUS = 289                   // UMINUS
+    BOOLEAN_TYPE = 261,            // BOOLEAN_TYPE
+    FLOAT_TYPE = 262,              // FLOAT_TYPE
+    INT_TYPE = 263,                // INT_TYPE
+    IF = 264,                      // IF
+    ELSE = 265,                    // ELSE
+    WHILE = 266,                   // WHILE
+    RETURN = 267,                  // RETURN
+    ADD = 268,                     // ADD
+    SUB = 269,                     // SUB
+    MUL = 270,                     // MUL
+    DIV = 271,                     // DIV
+    ASSIGN = 272,                  // ASSIGN
+    SEMICOLON = 273,               // SEMICOLON
+    LPAREN = 274,                  // LPAREN
+    RPAREN = 275,                  // RPAREN
+    LBRACE = 276,                  // LBRACE
+    RBRACE = 277,                  // RBRACE
+    COMMA = 278,                   // COMMA
+    LESS_THAN = 279,               // LESS_THAN
+    GREATER_THAN = 280,            // GREATER_THAN
+    LESS_THAN_EQUAL = 281,         // LESS_THAN_EQUAL
+    GREATER_THAN_EQUAL = 282,      // GREATER_THAN_EQUAL
+    EQUAL = 283,                   // EQUAL
+    NOT_EQUAL = 284,               // NOT_EQUAL
+    LOGICAL_AND = 285,             // LOGICAL_AND
+    LOGICAL_OR = 286,              // LOGICAL_OR
+    LOGICAL_NOT = 287,             // LOGICAL_NOT
+    READ = 288,                    // READ
+    WRITE = 289,                   // WRITE
+    MINUS = 290,                   // MINUS
+    UMINUS = 291                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -493,7 +496,7 @@ namespace mylang {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 35, ///< Number of tokens.
+        YYNTOKENS = 37, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -501,44 +504,47 @@ namespace mylang {
         S_INTLITERAL = 3,                        // INTLITERAL
         S_FLOATLITERAL = 4,                      // FLOATLITERAL
         S_ID = 5,                                // ID
-        S_INT_TYPE = 6,                          // INT_TYPE
-        S_IF = 7,                                // IF
-        S_ELSE = 8,                              // ELSE
-        S_WHILE = 9,                             // WHILE
-        S_RETURN = 10,                           // RETURN
-        S_ADD = 11,                              // ADD
-        S_SUB = 12,                              // SUB
-        S_MUL = 13,                              // MUL
-        S_DIV = 14,                              // DIV
-        S_ASSIGN = 15,                           // ASSIGN
-        S_SEMICOLON = 16,                        // SEMICOLON
-        S_LPAREN = 17,                           // LPAREN
-        S_RPAREN = 18,                           // RPAREN
-        S_LBRACE = 19,                           // LBRACE
-        S_RBRACE = 20,                           // RBRACE
-        S_COMMA = 21,                            // COMMA
-        S_LESS_THAN = 22,                        // LESS_THAN
-        S_GREATER_THAN = 23,                     // GREATER_THAN
-        S_LESS_THAN_EQUAL = 24,                  // LESS_THAN_EQUAL
-        S_GREATER_THAN_EQUAL = 25,               // GREATER_THAN_EQUAL
-        S_EQUAL = 26,                            // EQUAL
-        S_NOT_EQUAL = 27,                        // NOT_EQUAL
-        S_LOGICAL_AND = 28,                      // LOGICAL_AND
-        S_LOGICAL_OR = 29,                       // LOGICAL_OR
-        S_LOGICAL_NOT = 30,                      // LOGICAL_NOT
-        S_READ = 31,                             // READ
-        S_WRITE = 32,                            // WRITE
-        S_MINUS = 33,                            // MINUS
-        S_UMINUS = 34,                           // UMINUS
-        S_YYACCEPT = 35,                         // $accept
-        S_program = 36,                          // program
-        S_function = 37,                         // function
-        S_func_decl = 38,                        // func_decl
-        S_args = 39,                             // args
-        S_block = 40,                            // block
-        S_statement_list = 41,                   // statement_list
-        S_statement = 42,                        // statement
-        S_expr = 43                              // expr
+        S_BOOLEAN_TYPE = 6,                      // BOOLEAN_TYPE
+        S_FLOAT_TYPE = 7,                        // FLOAT_TYPE
+        S_INT_TYPE = 8,                          // INT_TYPE
+        S_IF = 9,                                // IF
+        S_ELSE = 10,                             // ELSE
+        S_WHILE = 11,                            // WHILE
+        S_RETURN = 12,                           // RETURN
+        S_ADD = 13,                              // ADD
+        S_SUB = 14,                              // SUB
+        S_MUL = 15,                              // MUL
+        S_DIV = 16,                              // DIV
+        S_ASSIGN = 17,                           // ASSIGN
+        S_SEMICOLON = 18,                        // SEMICOLON
+        S_LPAREN = 19,                           // LPAREN
+        S_RPAREN = 20,                           // RPAREN
+        S_LBRACE = 21,                           // LBRACE
+        S_RBRACE = 22,                           // RBRACE
+        S_COMMA = 23,                            // COMMA
+        S_LESS_THAN = 24,                        // LESS_THAN
+        S_GREATER_THAN = 25,                     // GREATER_THAN
+        S_LESS_THAN_EQUAL = 26,                  // LESS_THAN_EQUAL
+        S_GREATER_THAN_EQUAL = 27,               // GREATER_THAN_EQUAL
+        S_EQUAL = 28,                            // EQUAL
+        S_NOT_EQUAL = 29,                        // NOT_EQUAL
+        S_LOGICAL_AND = 30,                      // LOGICAL_AND
+        S_LOGICAL_OR = 31,                       // LOGICAL_OR
+        S_LOGICAL_NOT = 32,                      // LOGICAL_NOT
+        S_READ = 33,                             // READ
+        S_WRITE = 34,                            // WRITE
+        S_MINUS = 35,                            // MINUS
+        S_UMINUS = 36,                           // UMINUS
+        S_YYACCEPT = 37,                         // $accept
+        S_program = 38,                          // program
+        S_function = 39,                         // function
+        S_func_decl = 40,                        // func_decl
+        S_datatype = 41,                         // datatype
+        S_args = 42,                             // args
+        S_block = 43,                            // block
+        S_statement_list = 44,                   // statement_list
+        S_statement = 45,                        // statement
+        S_expr = 46                              // expr
       };
     };
 
@@ -591,6 +597,7 @@ namespace mylang {
         value.move< std::vector<tree> > (std::move (that.value));
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.move< tree > (std::move (that.value));
@@ -719,6 +726,7 @@ switch (yykind)
         value.template destroy< std::vector<tree> > ();
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.template destroy< tree > ();
@@ -966,6 +974,36 @@ switch (yykind)
       make_ID (const std::string& v)
       {
         return symbol_type (token::ID, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BOOLEAN_TYPE ()
+      {
+        return symbol_type (token::BOOLEAN_TYPE);
+      }
+#else
+      static
+      symbol_type
+      make_BOOLEAN_TYPE ()
+      {
+        return symbol_type (token::BOOLEAN_TYPE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FLOAT_TYPE ()
+      {
+        return symbol_type (token::FLOAT_TYPE);
+      }
+#else
+      static
+      symbol_type
+      make_FLOAT_TYPE ()
+      {
+        return symbol_type (token::FLOAT_TYPE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1707,9 +1745,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 199,     ///< Last index in yytable_.
-      yynnts_ = 9,  ///< Number of nonterminal symbols.
-      yyfinal_ = 6 ///< Termination state number.
+      yylast_ = 208,     ///< Last index in yytable_.
+      yynnts_ = 10,  ///< Number of nonterminal symbols.
+      yyfinal_ = 8 ///< Termination state number.
     };
 
 
@@ -1722,7 +1760,7 @@ switch (yykind)
 
 #line 46 "mylang.yy"
 } // mylang
-#line 1726 "MylangParser.h"
+#line 1764 "MylangParser.h"
 
 
 // "%code provides" blocks.
@@ -1732,7 +1770,7 @@ switch (yykind)
         int yylex(mylang::MylangParser::semantic_type *yylval, yyscan_t yyscanner)
     YY_DECL;
 
-#line 1736 "MylangParser.h"
+#line 1774 "MylangParser.h"
 
 
 #endif // !YY_YY_MYLANGPARSER_H_INCLUDED

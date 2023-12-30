@@ -205,6 +205,7 @@ namespace mylang {
         value.copy< std::vector<tree> > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.copy< tree > (YY_MOVE (that.value));
@@ -259,6 +260,7 @@ namespace mylang {
         value.move< std::vector<tree> > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.move< tree > (YY_MOVE (s.value));
@@ -382,6 +384,7 @@ namespace mylang {
         value.YY_MOVE_OR_COPY< std::vector<tree> > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.YY_MOVE_OR_COPY< tree > (YY_MOVE (that.value));
@@ -420,6 +423,7 @@ namespace mylang {
         value.move< std::vector<tree> > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.move< tree > (YY_MOVE (that.value));
@@ -458,6 +462,7 @@ namespace mylang {
         value.copy< std::vector<tree> > (that.value);
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.copy< tree > (that.value);
@@ -494,6 +499,7 @@ namespace mylang {
         value.move< std::vector<tree> > (that.value);
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         value.move< tree > (that.value);
@@ -770,6 +776,7 @@ namespace mylang {
         yylhs.value.emplace< std::vector<tree> > ();
         break;
 
+      case symbol_kind::S_datatype: // datatype
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expr: // expr
         yylhs.value.emplace< tree > ();
@@ -790,126 +797,144 @@ namespace mylang {
           switch (yyn)
             {
   case 2: // program: function
-#line 92 "mylang.yy"
+#line 93 "mylang.yy"
                             {
                                 std::cout << "Matched function" <<std::endl;
                                 //std::vector<GenericFunction*> functionList;
                                 //functionList.push_back($1);
                                 //mainfunc = functionList[1]->getFuncGenericTree();
                             }
-#line 801 "MylangParser.cc"
+#line 808 "MylangParser.cc"
     break;
 
   case 3: // program: program function
-#line 98 "mylang.yy"
+#line 99 "mylang.yy"
                             {
                                 std::cout << "Matched program function" <<std::endl;
                             }
-#line 809 "MylangParser.cc"
+#line 816 "MylangParser.cc"
     break;
 
   case 4: // function: func_decl block
-#line 102 "mylang.yy"
+#line 103 "mylang.yy"
                            {
                                 std::cout << "Matched func_decl block" <<std::endl;
                                 currentFunction->addBlock(yystack_[0].value.as < GenericBlock* > ()->getBlockTree(),yystack_[0].value.as < GenericBlock* > ()->getBlockBindExpr());                    
                                 mainfunc = currentFunction->getFuncGenericTree();
                             }
-#line 819 "MylangParser.cc"
+#line 826 "MylangParser.cc"
     break;
 
-  case 5: // func_decl: INT_TYPE ID LPAREN args RPAREN
-#line 109 "mylang.yy"
+  case 5: // func_decl: datatype ID LPAREN args RPAREN
+#line 110 "mylang.yy"
                                            {
                                                     std::cout << "Matched INT_TYPE ID LPAREN args RPAREN" <<std::endl;
-                                                    currentFunction = new GenericFunction(integer_type_node, yystack_[3].value.as < std::string > (), yystack_[1].value.as < std::vector<tree> > ());
+                                                    currentFunction = new GenericFunction(yystack_[4].value.as < tree > (), yystack_[3].value.as < std::string > (), yystack_[1].value.as < std::vector<tree> > ());
                                                 }
-#line 828 "MylangParser.cc"
+#line 835 "MylangParser.cc"
     break;
 
-  case 6: // args: %empty
-#line 115 "mylang.yy"
+  case 6: // datatype: INT_TYPE
+#line 116 "mylang.yy"
+                    {yylhs.value.as < tree > () = integer_type_node;}
+#line 841 "MylangParser.cc"
+    break;
+
+  case 7: // datatype: FLOAT_TYPE
+#line 117 "mylang.yy"
+                        {yylhs.value.as < tree > () = float_type_node;}
+#line 847 "MylangParser.cc"
+    break;
+
+  case 8: // datatype: BOOLEAN_TYPE
+#line 118 "mylang.yy"
+                         {yylhs.value.as < tree > () = boolean_type_node;}
+#line 853 "MylangParser.cc"
+    break;
+
+  case 9: // args: %empty
+#line 121 "mylang.yy"
                         {
                             std::cout << "Matched Empty args" << std::endl;
                             yylhs.value.as < std::vector<tree> > ().clear();
                         }
-#line 837 "MylangParser.cc"
+#line 862 "MylangParser.cc"
     break;
 
-  case 7: // args: INT_TYPE ID
-#line 119 "mylang.yy"
+  case 10: // args: datatype ID
+#line 125 "mylang.yy"
                         {
                             std::cout << "Matched INT_TYPE ID" << std::endl;
-                            yylhs.value.as < std::vector<tree> > ().push_back(integer_type_node);
+                            yylhs.value.as < std::vector<tree> > ().push_back(yystack_[1].value.as < tree > ());
                         }
-#line 846 "MylangParser.cc"
+#line 871 "MylangParser.cc"
     break;
 
-  case 8: // args: args COMMA INT_TYPE ID
-#line 123 "mylang.yy"
+  case 11: // args: args COMMA datatype ID
+#line 129 "mylang.yy"
                                     {
                                         std::cout << "Matched args COMMA INT_TYPE ID" << std::endl;
-                                        yylhs.value.as < std::vector<tree> > ().push_back(integer_type_node);
+                                        yylhs.value.as < std::vector<tree> > ().push_back(yystack_[1].value.as < tree > ());
                                     }
-#line 855 "MylangParser.cc"
+#line 880 "MylangParser.cc"
     break;
 
-  case 9: // block: LBRACE statement_list RBRACE
-#line 129 "mylang.yy"
+  case 12: // block: LBRACE statement_list RBRACE
+#line 135 "mylang.yy"
                                         {
                                             std::cout << "Matched LBRACE statement_list RBRACE" << std::endl;
                                             yylhs.value.as < GenericBlock* > () = new GenericBlock(yystack_[1].value.as < GenericStatementList* > ()->getStmtList());
                                         }
-#line 864 "MylangParser.cc"
+#line 889 "MylangParser.cc"
     break;
 
-  case 10: // statement_list: %empty
-#line 134 "mylang.yy"
+  case 13: // statement_list: %empty
+#line 140 "mylang.yy"
                             {
                                 std::cout << "Matched Empty statement_list" << std::endl;
                                 yylhs.value.as < GenericStatementList* > () = new GenericStatementList();
                                                             }
-#line 873 "MylangParser.cc"
+#line 898 "MylangParser.cc"
     break;
 
-  case 11: // statement_list: statement_list statement
-#line 138 "mylang.yy"
+  case 14: // statement_list: statement_list statement
+#line 144 "mylang.yy"
                                     {
                                         std::cout << "Matched statement_list statement" << std::endl;
                                         yystack_[1].value.as < GenericStatementList* > ()->addStatement(yystack_[0].value.as < tree > ());
                                         yylhs.value.as < GenericStatementList* > ()=yystack_[1].value.as < GenericStatementList* > ();
                                                                             }
-#line 883 "MylangParser.cc"
+#line 908 "MylangParser.cc"
     break;
 
-  case 12: // statement: expr SEMICOLON
-#line 145 "mylang.yy"
+  case 15: // statement: expr SEMICOLON
+#line 151 "mylang.yy"
            { yylhs.value.as < tree > () = yystack_[1].value.as < tree > (); }
-#line 889 "MylangParser.cc"
+#line 914 "MylangParser.cc"
     break;
 
-  case 13: // statement: INT_TYPE ID SEMICOLON
-#line 146 "mylang.yy"
+  case 16: // statement: datatype ID SEMICOLON
+#line 152 "mylang.yy"
                                     { 
                                         std::cout << "Matched INT_TYPE ID SEMICOLON" << std::endl;
-                                        tree varDecl = GeneratorUtils::generateVariableDeclaration("$2", integer_type_node);
+                                        tree varDecl = GeneratorUtils::generateVariableDeclaration("$2", yystack_[2].value.as < tree > ());
                                         sym[yystack_[1].value.as < std::string > ()] = varDecl;
                                         yylhs.value.as < tree > () = GeneratorUtils::generateDeclareExpr(sym[yystack_[1].value.as < std::string > ()]);
                                     }
-#line 900 "MylangParser.cc"
+#line 925 "MylangParser.cc"
     break;
 
-  case 14: // statement: ID ASSIGN expr SEMICOLON
-#line 152 "mylang.yy"
+  case 17: // statement: ID ASSIGN expr SEMICOLON
+#line 158 "mylang.yy"
                                     { 
                                         std::cout << "Matched ID ASSIGN expr SEMICOLON" << std::endl;
                                         yylhs.value.as < tree > () = GeneratorUtils::generateAssignmentTree(sym[yystack_[3].value.as < std::string > ()], yystack_[1].value.as < tree > ());
                                     }
-#line 909 "MylangParser.cc"
+#line 934 "MylangParser.cc"
     break;
 
-  case 15: // statement: RETURN expr SEMICOLON
-#line 156 "mylang.yy"
+  case 18: // statement: RETURN expr SEMICOLON
+#line 162 "mylang.yy"
                                     {
                                         std::cout << "Matched RETURN expr SEMICOLON" << std::endl; 
                                         // return value
@@ -922,128 +947,137 @@ namespace mylang {
                                                     TREE_TYPE (retval),
                                                     modify_retval);
                                     }
-#line 926 "MylangParser.cc"
+#line 951 "MylangParser.cc"
     break;
 
-  case 16: // statement: WRITE ID SEMICOLON
-#line 168 "mylang.yy"
+  case 19: // statement: WRITE ID SEMICOLON
+#line 174 "mylang.yy"
                                     {
                                         std::cout << "Matched WRITE ID SEMICOLON" << std::endl;
                                         yylhs.value.as < tree > () = MyIO::Print(sym[yystack_[1].value.as < std::string > ()]);
                                     }
-#line 935 "MylangParser.cc"
+#line 960 "MylangParser.cc"
     break;
 
-  case 17: // expr: ID
-#line 174 "mylang.yy"
+  case 20: // expr: ID
+#line 180 "mylang.yy"
                     { 
                         std::cout << "Matched ID" << std::endl;
                         yylhs.value.as < tree > () = sym[yystack_[0].value.as < std::string > ()]; 
                     }
-#line 944 "MylangParser.cc"
+#line 969 "MylangParser.cc"
     break;
 
-  case 18: // expr: INTLITERAL
-#line 178 "mylang.yy"
+  case 21: // expr: INTLITERAL
+#line 184 "mylang.yy"
                     { 
                         std::cout << "Matched INTLITERAL" << std::endl;
                         yylhs.value.as < tree > () = GeneratorUtils::generateIntConstant(std::string(yystack_[0].value.as < std::string > ()));
                     }
-#line 953 "MylangParser.cc"
+#line 978 "MylangParser.cc"
     break;
 
-  case 19: // expr: expr ADD expr
-#line 182 "mylang.yy"
-                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('+',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 959 "MylangParser.cc"
-    break;
-
-  case 20: // expr: expr MINUS expr
-#line 183 "mylang.yy"
-                      { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('-',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 965 "MylangParser.cc"
-    break;
-
-  case 21: // expr: expr MUL expr
-#line 184 "mylang.yy"
-                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('*',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 971 "MylangParser.cc"
-    break;
-
-  case 22: // expr: expr DIV expr
-#line 185 "mylang.yy"
-                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('/',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 977 "MylangParser.cc"
-    break;
-
-  case 23: // expr: expr LESS_THAN expr
-#line 186 "mylang.yy"
-                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 983 "MylangParser.cc"
-    break;
-
-  case 24: // expr: expr GREATER_THAN expr
-#line 187 "mylang.yy"
-                             { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 989 "MylangParser.cc"
-    break;
-
-  case 25: // expr: expr LESS_THAN_EQUAL expr
+  case 22: // expr: FLOATLITERAL
 #line 188 "mylang.yy"
-                                { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 995 "MylangParser.cc"
+                      { 
+                        std::cout << "Matched FLOATLITERAL" << std::endl;
+                        yylhs.value.as < tree > () = GeneratorUtils::generateFloatConstant(std::string(yystack_[0].value.as < std::string > ()));
+                    }
+#line 987 "MylangParser.cc"
     break;
 
-  case 26: // expr: expr GREATER_THAN_EQUAL expr
-#line 189 "mylang.yy"
-                                   { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 1001 "MylangParser.cc"
-    break;
-
-  case 27: // expr: expr EQUAL expr
-#line 190 "mylang.yy"
-                      { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 1007 "MylangParser.cc"
-    break;
-
-  case 28: // expr: expr NOT_EQUAL expr
-#line 191 "mylang.yy"
-                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::NOT_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 1013 "MylangParser.cc"
-    break;
-
-  case 29: // expr: expr LOGICAL_AND expr
+  case 23: // expr: expr ADD expr
 #line 192 "mylang.yy"
-                            { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::AND,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 1019 "MylangParser.cc"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('+',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 993 "MylangParser.cc"
     break;
 
-  case 30: // expr: expr LOGICAL_OR expr
+  case 24: // expr: expr MINUS expr
 #line 193 "mylang.yy"
-                           { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::OR,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
-#line 1025 "MylangParser.cc"
+                      { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('-',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 999 "MylangParser.cc"
     break;
 
-  case 31: // expr: LOGICAL_NOT expr
+  case 25: // expr: expr MUL expr
 #line 194 "mylang.yy"
-                       { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanUnaryNotOpTree(yystack_[0].value.as < tree > ()); }
-#line 1031 "MylangParser.cc"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('*',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1005 "MylangParser.cc"
     break;
 
-  case 32: // expr: MINUS expr
+  case 26: // expr: expr DIV expr
 #line 195 "mylang.yy"
-                              { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticUnaryMinusOpTree(yystack_[0].value.as < tree > ()); }
-#line 1037 "MylangParser.cc"
+                    { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticBinaryOpTree('/',yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1011 "MylangParser.cc"
     break;
 
-  case 33: // expr: LPAREN expr RPAREN
+  case 27: // expr: expr LESS_THAN expr
 #line 196 "mylang.yy"
+                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1017 "MylangParser.cc"
+    break;
+
+  case 28: // expr: expr GREATER_THAN expr
+#line 197 "mylang.yy"
+                             { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1023 "MylangParser.cc"
+    break;
+
+  case 29: // expr: expr LESS_THAN_EQUAL expr
+#line 198 "mylang.yy"
+                                { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::LESSER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1029 "MylangParser.cc"
+    break;
+
+  case 30: // expr: expr GREATER_THAN_EQUAL expr
+#line 199 "mylang.yy"
+                                   { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::GREATER_THAN_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1035 "MylangParser.cc"
+    break;
+
+  case 31: // expr: expr EQUAL expr
+#line 200 "mylang.yy"
+                      { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1041 "MylangParser.cc"
+    break;
+
+  case 32: // expr: expr NOT_EQUAL expr
+#line 201 "mylang.yy"
+                          { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::NOT_EQUAL,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1047 "MylangParser.cc"
+    break;
+
+  case 33: // expr: expr LOGICAL_AND expr
+#line 202 "mylang.yy"
+                            { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::AND,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1053 "MylangParser.cc"
+    break;
+
+  case 34: // expr: expr LOGICAL_OR expr
+#line 203 "mylang.yy"
+                           { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanBinaryOpTree(BooleanOpcode::OR,yystack_[2].value.as < tree > (), yystack_[0].value.as < tree > ()); }
+#line 1059 "MylangParser.cc"
+    break;
+
+  case 35: // expr: LOGICAL_NOT expr
+#line 204 "mylang.yy"
+                       { yylhs.value.as < tree > () = GeneratorUtils::generateBooleanUnaryNotOpTree(yystack_[0].value.as < tree > ()); }
+#line 1065 "MylangParser.cc"
+    break;
+
+  case 36: // expr: MINUS expr
+#line 205 "mylang.yy"
+                              { yylhs.value.as < tree > () = GeneratorUtils::generateArithimaticUnaryMinusOpTree(yystack_[0].value.as < tree > ()); }
+#line 1071 "MylangParser.cc"
+    break;
+
+  case 37: // expr: LPAREN expr RPAREN
+#line 206 "mylang.yy"
                          { yylhs.value.as < tree > () = yystack_[1].value.as < tree > (); }
-#line 1043 "MylangParser.cc"
+#line 1077 "MylangParser.cc"
     break;
 
 
-#line 1047 "MylangParser.cc"
+#line 1081 "MylangParser.cc"
 
             default:
               break;
@@ -1232,124 +1266,129 @@ namespace mylang {
 
 
 
-  const signed char MylangParser::yypact_ninf_ = -18;
+  const signed char MylangParser::yypact_ninf_ = -14;
 
   const signed char MylangParser::yytable_ninf_ = -1;
 
   const short
   MylangParser::yypact_[] =
   {
-       0,     7,     2,   -18,    -6,    -3,   -18,   -18,   -18,   -18,
-      10,    29,    17,   -14,   -18,    18,    35,    33,    33,   -18,
-      33,    36,    33,   -18,    54,   -18,   -18,    37,    33,    32,
-     -18,    75,    96,   138,    44,   -18,    33,    33,    33,   -18,
-      33,    33,    33,    33,    33,    33,    33,    33,    33,    42,
-     117,   -18,   -18,   -18,   -18,    -4,   -18,   -18,     4,     4,
-       4,     4,   166,   166,    31,   159,    -4,   -18,   -18
+      35,   -14,   -14,   -14,    58,   -14,    -9,    17,   -14,   -14,
+     -14,   -14,     8,    -1,    35,   -14,   -14,     6,     5,     5,
+     -14,     5,    24,     5,    27,   -14,    44,    33,    -6,     5,
+     -14,    65,    86,   128,    29,   -14,    43,     5,     5,     5,
+     -14,     5,     5,     5,     5,     5,     5,     5,     5,     5,
+     -14,   -14,    35,   107,   -14,   -14,   -14,   -14,     4,   -14,
+     -14,     0,     0,     0,     0,   173,   173,   167,   149,     4,
+      62,   -14,   -14
   };
 
   const signed char
   MylangParser::yydefact_[] =
   {
-       0,     0,     0,     2,     0,     0,     1,     3,    10,     4,
-       6,     0,     0,     0,    18,    17,     0,     0,     0,     9,
-       0,     0,     0,    11,     0,     7,     5,     0,     0,     0,
-      17,     0,     0,    31,     0,    32,     0,     0,     0,    12,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    13,    15,    33,    16,    19,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    20,     8,    14
+       0,     8,     7,     6,     0,     2,     0,     0,     1,     3,
+      13,     4,     0,     0,     9,    21,    22,    20,     0,     0,
+      12,     0,     0,     0,     0,    14,     0,     0,     0,     0,
+      20,     0,     0,    35,     0,    36,     0,     0,     0,     0,
+      15,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      10,     5,     0,     0,    18,    37,    19,    16,    23,    25,
+      26,    27,    28,    29,    30,    31,    32,    33,    34,    24,
+       0,    17,    11
   };
 
   const signed char
   MylangParser::yypgoto_[] =
   {
-     -18,   -18,    49,   -18,   -18,   -18,   -18,   -18,   -17
+     -14,   -14,    59,   -14,   -13,   -14,   -14,   -14,   -14,     7
   };
 
   const signed char
   MylangParser::yydefgoto_[] =
   {
-       0,     2,     3,     4,    13,     9,    11,    23,    24
+       0,     4,     5,     6,     7,    28,    11,    13,    25,    26
   };
 
   const signed char
   MylangParser::yytable_[] =
   {
-      31,    32,     6,    33,    26,    35,     1,    27,     1,    37,
-      38,    50,     5,     8,    10,    36,    12,    37,    38,    55,
-      56,    57,    25,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    14,    28,    15,    16,    14,    48,    30,    17,
-      29,    34,    36,    49,    37,    38,    18,    67,    51,    19,
-      18,     7,     0,    40,    41,    42,    43,    44,    45,    20,
-      54,    21,    22,    20,    48,    36,    22,    37,    38,     0,
-      39,     0,     0,     0,     0,     0,    40,    41,    42,    43,
-      44,    45,    46,    47,     0,     0,    36,    48,    37,    38,
-       0,    52,     0,     0,     0,     0,     0,    40,    41,    42,
-      43,    44,    45,    46,    47,     0,     0,    36,    48,    37,
-      38,     0,     0,     0,    53,     0,     0,     0,    40,    41,
-      42,    43,    44,    45,    46,    47,     0,     0,    36,    48,
-      37,    38,     0,    68,     0,     0,     0,     0,     0,    40,
-      41,    42,    43,    44,    45,    46,    47,     0,     0,    36,
-      48,    37,    38,     0,     0,     0,     0,     0,     0,     0,
-      40,    41,    42,    43,    44,    45,    46,    47,     0,     0,
-      36,    48,    37,    38,     0,     0,     0,    36,     0,    37,
-      38,    40,    41,    42,    43,    44,    45,    46,    40,    41,
-      42,    43,    48,     0,     0,     0,     0,     0,     0,    48
+      24,    27,    15,    16,    17,     1,     2,     3,    15,    16,
+      30,    18,    10,    37,    51,    38,    39,    52,    19,    38,
+      39,    20,    12,    29,    19,    31,    32,    14,    33,    34,
+      35,    21,    36,    22,    23,    49,    53,    21,    50,    70,
+      23,     1,     2,     3,    58,    59,    60,    56,    61,    62,
+      63,    64,    65,    66,    67,    68,    69,    37,     8,    38,
+      39,    57,    40,     9,     1,     2,     3,    72,    41,    42,
+      43,    44,    45,    46,    47,    48,     0,     0,    37,    49,
+      38,    39,     0,    54,     0,     0,     0,     0,     0,    41,
+      42,    43,    44,    45,    46,    47,    48,     0,     0,    37,
+      49,    38,    39,     0,     0,     0,    55,     0,     0,     0,
+      41,    42,    43,    44,    45,    46,    47,    48,     0,     0,
+      37,    49,    38,    39,     0,    71,     0,     0,     0,     0,
+       0,    41,    42,    43,    44,    45,    46,    47,    48,     0,
+       0,    37,    49,    38,    39,     0,     0,     0,     0,     0,
+       0,     0,    41,    42,    43,    44,    45,    46,    47,    48,
+       0,     0,    37,    49,    38,    39,     0,     0,     0,     0,
+       0,     0,     0,    41,    42,    43,    44,    45,    46,    47,
+      37,     0,    38,    39,    49,     0,    37,     0,    38,    39,
+       0,    41,    42,    43,    44,    45,    46,    41,    42,    43,
+      44,     0,    49,     0,     0,     0,     0,     0,    49
   };
 
   const signed char
   MylangParser::yycheck_[] =
   {
-      17,    18,     0,    20,    18,    22,     6,    21,     6,    13,
-      14,    28,     5,    19,    17,    11,     6,    13,    14,    36,
-      37,    38,     5,    40,    41,    42,    43,    44,    45,    46,
-      47,    48,     3,    15,     5,     6,     3,    33,     5,    10,
-       5,     5,    11,     6,    13,    14,    17,     5,    16,    20,
-      17,     2,    -1,    22,    23,    24,    25,    26,    27,    30,
-      16,    32,    33,    30,    33,    11,    33,    13,    14,    -1,
-      16,    -1,    -1,    -1,    -1,    -1,    22,    23,    24,    25,
-      26,    27,    28,    29,    -1,    -1,    11,    33,    13,    14,
-      -1,    16,    -1,    -1,    -1,    -1,    -1,    22,    23,    24,
-      25,    26,    27,    28,    29,    -1,    -1,    11,    33,    13,
-      14,    -1,    -1,    -1,    18,    -1,    -1,    -1,    22,    23,
-      24,    25,    26,    27,    28,    29,    -1,    -1,    11,    33,
-      13,    14,    -1,    16,    -1,    -1,    -1,    -1,    -1,    22,
-      23,    24,    25,    26,    27,    28,    29,    -1,    -1,    11,
-      33,    13,    14,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      22,    23,    24,    25,    26,    27,    28,    29,    -1,    -1,
-      11,    33,    13,    14,    -1,    -1,    -1,    11,    -1,    13,
-      14,    22,    23,    24,    25,    26,    27,    28,    22,    23,
-      24,    25,    33,    -1,    -1,    -1,    -1,    -1,    -1,    33
+      13,    14,     3,     4,     5,     6,     7,     8,     3,     4,
+       5,    12,    21,    13,    20,    15,    16,    23,    19,    15,
+      16,    22,     5,    17,    19,    18,    19,    19,    21,     5,
+      23,    32,     5,    34,    35,    35,    29,    32,     5,    52,
+      35,     6,     7,     8,    37,    38,    39,    18,    41,    42,
+      43,    44,    45,    46,    47,    48,    49,    13,     0,    15,
+      16,    18,    18,     4,     6,     7,     8,     5,    24,    25,
+      26,    27,    28,    29,    30,    31,    -1,    -1,    13,    35,
+      15,    16,    -1,    18,    -1,    -1,    -1,    -1,    -1,    24,
+      25,    26,    27,    28,    29,    30,    31,    -1,    -1,    13,
+      35,    15,    16,    -1,    -1,    -1,    20,    -1,    -1,    -1,
+      24,    25,    26,    27,    28,    29,    30,    31,    -1,    -1,
+      13,    35,    15,    16,    -1,    18,    -1,    -1,    -1,    -1,
+      -1,    24,    25,    26,    27,    28,    29,    30,    31,    -1,
+      -1,    13,    35,    15,    16,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    24,    25,    26,    27,    28,    29,    30,    31,
+      -1,    -1,    13,    35,    15,    16,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    24,    25,    26,    27,    28,    29,    30,
+      13,    -1,    15,    16,    35,    -1,    13,    -1,    15,    16,
+      -1,    24,    25,    26,    27,    28,    29,    24,    25,    26,
+      27,    -1,    35,    -1,    -1,    -1,    -1,    -1,    35
   };
 
   const signed char
   MylangParser::yystos_[] =
   {
-       0,     6,    36,    37,    38,     5,     0,    37,    19,    40,
-      17,    41,     6,    39,     3,     5,     6,    10,    17,    20,
-      30,    32,    33,    42,    43,     5,    18,    21,    15,     5,
-       5,    43,    43,    43,     5,    43,    11,    13,    14,    16,
-      22,    23,    24,    25,    26,    27,    28,    29,    33,     6,
-      43,    16,    16,    18,    16,    43,    43,    43,    43,    43,
-      43,    43,    43,    43,    43,    43,    43,     5,    16
+       0,     6,     7,     8,    38,    39,    40,    41,     0,    39,
+      21,    43,     5,    44,    19,     3,     4,     5,    12,    19,
+      22,    32,    34,    35,    41,    45,    46,    41,    42,    17,
+       5,    46,    46,    46,     5,    46,     5,    13,    15,    16,
+      18,    24,    25,    26,    27,    28,    29,    30,    31,    35,
+       5,    20,    23,    46,    18,    20,    18,    18,    46,    46,
+      46,    46,    46,    46,    46,    46,    46,    46,    46,    46,
+      41,    18,     5
   };
 
   const signed char
   MylangParser::yyr1_[] =
   {
-       0,    35,    36,    36,    37,    38,    39,    39,    39,    40,
-      41,    41,    42,    42,    42,    42,    42,    43,    43,    43,
-      43,    43,    43,    43,    43,    43,    43,    43,    43,    43,
-      43,    43,    43,    43
+       0,    37,    38,    38,    39,    40,    41,    41,    41,    42,
+      42,    42,    43,    44,    44,    45,    45,    45,    45,    45,
+      46,    46,    46,    46,    46,    46,    46,    46,    46,    46,
+      46,    46,    46,    46,    46,    46,    46,    46
   };
 
   const signed char
   MylangParser::yyr2_[] =
   {
-       0,     2,     1,     2,     2,     5,     0,     2,     4,     3,
-       0,     2,     2,     3,     4,     3,     3,     1,     1,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     2,     2,     3
+       0,     2,     1,     2,     2,     5,     1,     1,     1,     0,
+       2,     4,     3,     0,     2,     2,     3,     4,     3,     3,
+       1,     1,     1,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     2,     2,     3
   };
 
 
@@ -1360,12 +1399,13 @@ namespace mylang {
   const MylangParser::yytname_[] =
   {
   "\"end of file\"", "error", "\"invalid token\"", "INTLITERAL",
-  "FLOATLITERAL", "ID", "INT_TYPE", "IF", "ELSE", "WHILE", "RETURN", "ADD",
-  "SUB", "MUL", "DIV", "ASSIGN", "SEMICOLON", "LPAREN", "RPAREN", "LBRACE",
-  "RBRACE", "COMMA", "LESS_THAN", "GREATER_THAN", "LESS_THAN_EQUAL",
-  "GREATER_THAN_EQUAL", "EQUAL", "NOT_EQUAL", "LOGICAL_AND", "LOGICAL_OR",
-  "LOGICAL_NOT", "READ", "WRITE", "MINUS", "UMINUS", "$accept", "program",
-  "function", "func_decl", "args", "block", "statement_list", "statement",
+  "FLOATLITERAL", "ID", "BOOLEAN_TYPE", "FLOAT_TYPE", "INT_TYPE", "IF",
+  "ELSE", "WHILE", "RETURN", "ADD", "SUB", "MUL", "DIV", "ASSIGN",
+  "SEMICOLON", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "COMMA",
+  "LESS_THAN", "GREATER_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL",
+  "EQUAL", "NOT_EQUAL", "LOGICAL_AND", "LOGICAL_OR", "LOGICAL_NOT", "READ",
+  "WRITE", "MINUS", "UMINUS", "$accept", "program", "function",
+  "func_decl", "datatype", "args", "block", "statement_list", "statement",
   "expr", YY_NULLPTR
   };
 #endif
@@ -1375,10 +1415,10 @@ namespace mylang {
   const unsigned char
   MylangParser::yyrline_[] =
   {
-       0,    92,    92,    98,   102,   109,   115,   119,   123,   129,
-     134,   138,   145,   146,   152,   156,   168,   174,   178,   182,
-     183,   184,   185,   186,   187,   188,   189,   190,   191,   192,
-     193,   194,   195,   196
+       0,    93,    93,    99,   103,   110,   116,   117,   118,   121,
+     125,   129,   135,   140,   144,   151,   152,   158,   162,   174,
+     180,   184,   188,   192,   193,   194,   195,   196,   197,   198,
+     199,   200,   201,   202,   203,   204,   205,   206
   };
 
   void
@@ -1445,10 +1485,11 @@ namespace mylang {
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33,    34
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36
     };
     // Last valid token kind.
-    const int code_max = 289;
+    const int code_max = 291;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1460,9 +1501,9 @@ namespace mylang {
 
 #line 46 "mylang.yy"
 } // mylang
-#line 1464 "MylangParser.cc"
+#line 1505 "MylangParser.cc"
 
-#line 199 "mylang.yy"
+#line 209 "mylang.yy"
 
  
 void mylang::MylangParser::error(const std::string& msg) {

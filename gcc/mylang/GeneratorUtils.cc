@@ -63,6 +63,13 @@ tree GeneratorUtils::generateDeclareExpr(tree decl)
 
 tree GeneratorUtils::generateAssignmentTree(tree decl, tree expr)
 {
+    if(TREE_TYPE(decl) == boolean_type_node)
+    {
+        tree casted = build1(FLOAT_EXPR, boolean_type_node,
+                          expr);
+    return build2(MODIFY_EXPR,
+                  void_type_node, decl, casted);
+    }
     return build2(MODIFY_EXPR,
                   void_type_node, decl, expr);
 }

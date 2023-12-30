@@ -20,6 +20,8 @@ WS          [ \t\n]
 "else"      { return MylangParser::token::ELSE; }
 "while"     { return MylangParser::token::WHILE; }
 "int"       { return MylangParser::token::INT_TYPE; }
+"float"       { return MylangParser::token::FLOAT_TYPE; }
+"bool"       { return MylangParser::token::BOOLEAN_TYPE; }
 "return"    { return MylangParser::token::RETURN; }
 "read"    { return MylangParser::token::READ; }
 "write"    { return MylangParser::token::WRITE; }

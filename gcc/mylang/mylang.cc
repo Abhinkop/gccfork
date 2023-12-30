@@ -159,6 +159,10 @@ mylang_langhook_parse_file(void)
   yylex_destroy(scanner);
   fclose(file);
 
+  
+
+  tree fndecl = function;//getDummyMain();
+
   // auto dumps = g->get_dumps();
 
   // dumps->dump_start(TDI_original, &dump_flags);
@@ -167,9 +171,7 @@ mylang_langhook_parse_file(void)
   // dump_function(TDI_original,fndecl);
   // dumps->dump_finish(TDI_original);
   // dump_tree_statistics();
-
   // Convert from GENERIC to GIMPLE
-  tree fndecl = function;//getDummyMain();
   gimplify_function_tree(fndecl);
 
   // Insert it into the graph
